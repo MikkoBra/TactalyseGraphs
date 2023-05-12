@@ -1,0 +1,20 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
+/.idea/
+/.vscode/
+/src/
+/__pycache__/
+/bin/
+/share/
+/site-packages/
+*.cfg
+/lib/
+/venv/
+.DS_Store
+test.pdf
