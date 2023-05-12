@@ -1,8 +1,9 @@
 from flask import Flask, request
-from services.file_update_service import FileUpdateService
-from services.random_graph_service import RandomGraphService
-from services.line_graph_service import LineGraphService
-from services.radar_graph_service import RadarGraphService
+from .services.file_update_service import FileUpdateService
+from .services.random_graph_service import RandomGraphService
+from .services.line_graph_service import LineGraphService
+from .services.radar_graph_service import RadarGraphService
+import os
 
 app = Flask(__name__)
 
@@ -92,4 +93,4 @@ def line_graph():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", debug=True)
+    app.run(host="0.0.0.0", debug=True, port=5001)

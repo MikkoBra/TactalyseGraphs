@@ -31,7 +31,7 @@ class RadarGraphService(Service):
         player = form.get('player')
         compare = form.get('compare')
 
-        param_map = {"type": "line",
+        param_map = {"type": "radar",
                      "league": league,
                      "player": player,
                      "compare": compare}
