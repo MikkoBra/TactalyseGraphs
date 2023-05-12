@@ -9,7 +9,7 @@
 /.idea/
 /.vscode/
 /src/
-/__pycache__/
+__pycache__/
 /bin/
 /share/
 /site-packages/
