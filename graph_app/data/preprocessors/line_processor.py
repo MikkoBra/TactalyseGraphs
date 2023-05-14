@@ -34,6 +34,7 @@ class LineProcessor(Preprocessor):
         line_map = self.set_compare(param_map, line_map)
         line_map = self.set_league(param_map, line_map)
         line_map = self.set_player_data(line_map)
+        line_map = self.set_tactalyse_data(param_map, line_map)
         line_map = self.set_stats(param_map, line_map)
 
         return line_map
@@ -51,6 +52,9 @@ class LineProcessor(Preprocessor):
 
         compare = param_map.get('compare')
         line_map.update({'compare': compare})
+
+        compare_df = self.__reader.player_data(compare)
+        line_map.update({'compare_data': compare_df})
         return line_map
 
     def set_league(self, param_map, line_map):
@@ -69,6 +73,14 @@ class LineProcessor(Preprocessor):
 
         main_pos_short = self.shortened_dictionary().get(main_pos)
         line_map.update({'main_pos_short': main_pos_short})
+        return line_map
+
+    def set_tactalyse_data(self, param_map, line_map):
+        start_date = param_map['start-date']
+        line_map.update({'start_date': start_date})
+
+        end_date = param_map['end-date']
+        line_map.update({'end_date': end_date})
         return line_map
 
     def set_stats(self, param_map, line_map):
