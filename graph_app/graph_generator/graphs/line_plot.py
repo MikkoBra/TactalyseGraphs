@@ -54,12 +54,9 @@ class LinePlot(Graph):
         dates = pd.to_datetime(data['Date'], format='%Y-%m-%d')[::-1]
         start = pd.Timestamp(start_date)
         end = pd.Timestamp(end_date)
-        print(start_date)
         start_x = dates.searchsorted(start, side='left') - 1
         end_x = dates.searchsorted(end, side='left') - 1
 
-        print(start_x)
-        print(end_x)
         if 0 <= start_x <= len(dates):
             ax.axvline(x=start_x, linestyle="-", label="Tactalyse contract", color=self.__tactalyse)
             if start_x < end_x <= len(dates):
