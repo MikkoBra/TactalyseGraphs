@@ -38,9 +38,9 @@ class LinePlot(Graph):
         sns.lineplot(x=dates_x_values, y=data, ax=ax, color=color, label=label, zorder=order, linewidth=1, marker='o',
                      markersize=3)
 
-    def draw_years(self, ax, column_name, year_x_values, years):
+    def draw_years(self, ax, year_x_values, years):
         plt.xlabel("Year")
-        ax.set(title=column_name, xticks=year_x_values, xticklabels=years)
+        ax.set(xticks=year_x_values, xticklabels=years)
         no_label = False
         for year in year_x_values:
             if no_label:
@@ -90,12 +90,13 @@ class LinePlot(Graph):
         label = "Mean for " + player
         ax.axhline(y=mean, color='black', linestyle="dashed", label=label)
 
-        ax = self.draw_years(ax, column_name, year_x_values, years)
+        ax = self.draw_years(ax, year_x_values, years)
 
         if start_date:
             ax = self.draw_tactalyse_dates(ax, player_data, start_date, end_date)
 
         ax.legend(fontsize='small')
+        ax.set(title=column_name + " per match for " + player)
         buffer = io.BytesIO()
         plt.savefig(buffer, format='png')
         buffer.seek(0)
