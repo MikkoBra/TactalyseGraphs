@@ -19,7 +19,7 @@ class RadarGraphService(Service):
         player = payload.get('player')
         compare = payload.get('compare')
 
-        param_map = {"type": "line",
+        param_map = {"type": "radar",
                      "league": league,
                      "player": player,
                      "compare": compare}
