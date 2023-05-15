@@ -76,10 +76,10 @@ class LineProcessor(Preprocessor):
         return line_map
 
     def set_tactalyse_data(self, param_map, line_map):
-        start_date = param_map['start-date']
+        start_date = param_map.get('start-date')
         line_map.update({'start_date': start_date})
 
-        end_date = param_map['end-date']
+        end_date = param_map.get('end-date')
         line_map.update({'end_date': end_date})
         return line_map
 
