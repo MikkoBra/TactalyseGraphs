@@ -11,7 +11,11 @@ class DataConnector(AbstractConnector):
     def get_data(self, param_map):
         types = ['radar', 'line']
         if param_map.get('type') not in types:
-            param_map['type'] = random.choice(types)
+            if param_map.get('graph_type'):
+                print(param_map.get('graph_type'))
+                param_map['type'] = param_map.get('graph_type')
+            else:
+                param_map['type'] = random.choice(types)
             param_map = self.set_random_data(param_map)
 
         if param_map.get('type') == 'radar':

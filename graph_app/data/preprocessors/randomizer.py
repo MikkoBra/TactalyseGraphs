@@ -12,21 +12,21 @@ class Randomizer(Preprocessor):
         self.__reader = ExcelReader()
 
     def set_random_parameters(self, param_map):
-        if param_map.get('type') == "radar":
+        if param_map.get('graph_type') == "radar":
             league_df = self.__reader.all_league_data()
             league_df = league_df.fillna(0.0)
             param_map['league_df'] = league_df
             print("Extracted data into dataframe")
 
         if param_map.get('player') is None:
-            if param_map['type'] == "line":
+            if param_map['graph_type'] == "line":
                 param_map['player'] = self.random_player()
             else:
                 league_df = param_map['league_df']
                 random_value = league_df['Player'].sample(n=1).values[0]
                 param_map['player'] = random_value
 
-        if param_map.get('type') == "radar" and param_map.get('compare') is None:
+        if param_map.get('graph_type') == "radar" and param_map.get('compare') is None:
             league_df = param_map['league_df']
             player_pos = self.main_position_league_file(self.__reader.league_data(param_map['player'], league_df))
             position_df = league_df[league_df['Position'].str.contains(player_pos)]
@@ -35,7 +35,7 @@ class Randomizer(Preprocessor):
                 random_player = position_df['Player'].sample(n=1).values[0]
             param_map['compare'] = random_player
 
-        if param_map['type'] == "line" and param_map.get('stat') is None:
+        if param_map['graph_type'] == "line" and param_map.get('stat') is None:
             param_map['stat'] = self.random_player_stat()
 
         if param_map.get('league') is None:

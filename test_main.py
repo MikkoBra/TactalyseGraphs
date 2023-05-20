@@ -44,7 +44,8 @@ def test_radar():
 
 
 def test_random():
-    param_map = {"type": "test"}
+    param_map = {"type": "random",
+                 "graph_type": "line"}
 
     data_connector = DataConnector()
     data_map = data_connector.get_data(param_map)

@@ -32,13 +32,14 @@ class RandomGraphService(Service):
         return self.pass_data(param_map)
 
     def key_value_process(self, files, form):
-        type = form.get('graph-type')
+        graph_type = form.get('graph-type')
         league = form.get('league')
         player = form.get('player')
         start_date = form.get('start-date')
         end_date = form.get('end-date')
 
-        param_map = {"type": type,
+        param_map = {"type": "radar",
+                     "graph_type": graph_type,
                      "league": league,
                      "player": player,
                      "start_date": start_date,
@@ -47,10 +48,6 @@ class RandomGraphService(Service):
         return self.pass_data(param_map)
 
     def pass_data(self, param_map):
-        types = ['radar', 'line']
-        if param_map.get('type') not in types:
-            param_map['type'] = random.choice(types)
-
         data_connector = DataConnector()
         data_map = data_connector.get_data(param_map)
 
