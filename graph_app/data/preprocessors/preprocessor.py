@@ -49,27 +49,34 @@ class Preprocessor:
         :return: Dictionary containing all positions as keys, and the associated stats as values.
         """
 
-        cat_dict = dict.fromkeys(['GK'], ['Long passes per 90', 'Interceptions per 90',
-                                          'Defensive duels per 90', 'Shots blocked per 90',
-                                          'Sliding tackles per 90', 'Dribbles per 90'])
-        cat_dict.update(dict.fromkeys(['FB'], ['Goals per 90', 'Interceptions per 90',
-                                               'Defensive duels per 90', 'Fouls per 90',
+        cat_dict = dict.fromkeys(['GK'], ['Shots blocked per 90', 'Long passes per 90',
+                                          'Accurate long passes, %', 'Key passes per 90',
+                                          'Smart passes per 90', 'Accurate smart passes, %',
+                                          'Aerial duels won, %'])
+        cat_dict.update(dict.fromkeys(['FB'], ['Sliding tackles per 90', 'Interceptions per 90',
+                                               'Crosses per 90', 'Accurate crosses, %',
+                                               'Defensive duels per 90', 'Defensive duels won, %',
+                                               'Pass accuracy (%)', 'Key passes per 90']))
+        cat_dict.update(dict.fromkeys(['CB'], ['Shots blocked per 90', 'Interceptions per 90',
+                                               'Pass accuracy (%)', 'Aerial duels won, %',
+                                               'Defensive duels per 90', 'Defensive duels won, %',
                                                'Crosses per 90', 'Dribbles per 90']))
-        cat_dict.update(dict.fromkeys(['CB'], ['Goals per 90', 'Interceptions per 90',
-                                               'Defensive duels per 90', 'Fouls per 90',
-                                               'Crosses per 90', 'Dribbles per 90']))
-        cat_dict.update(dict.fromkeys(['DM'], ['Goals per 90', 'Interceptions per 90',
-                                               'Defensive duels per 90', 'Fouls per 90',
-                                               'Crosses per 90', 'Dribbles per 90']))
+        cat_dict.update(dict.fromkeys(['DM'], ['Sliding tackles per 90', 'Interceptions per 90',
+                                               'Crosses per 90', 'Accurate crosses, %',
+                                               'Defensive duels per 90', 'Defensive duels won, %',
+                                               'Pass accuracy (%)', 'Key passes per 90']))
         cat_dict.update(dict.fromkeys(['AM'], ['Progressive runs per 90', 'Assists per 90',
-                                               'Offensive duels per 90', 'Fouls per 90',
-                                               'Goals per 90', 'Dribbles per 90']))
-        cat_dict.update(dict.fromkeys(['WI'], ['Progressive runs per 90', 'Assists per 90',
-                                               'Offensive duels per 90', 'Fouls per 90',
-                                               'Goals per 90', 'Dribbles per 90']))
-        cat_dict.update(dict.fromkeys(['ST'], ['Progressive runs per 90', 'Shots per 90',
-                                               'Offensive duels per 90', 'Fouls per 90',
-                                               'Goals per 90', 'Dribbles per 90']))
+                                               'Offensive duels won, %', 'Key passes per 90',
+                                               'Pass accuracy (%)', 'Goals per 90',
+                                               'Shots per 90', 'Shots on target, %']))
+        cat_dict.update(dict.fromkeys(['WI'], ['Crosses per 90', 'Assists per 90',
+                                               'Offensive duels won, %', 'Key passes per 90',
+                                               'Pass accuracy (%)', 'Goals per 90',
+                                               'Shots per 90', 'Shots on target, %']))
+        cat_dict.update(dict.fromkeys(['ST'], ['Successful dribbles, %', 'Assists per 90',
+                                               'Key passes per 90', 'xG/Shot',
+                                               'Pass accuracy (%)', 'Goals per 90',
+                                               'Shots per 90', 'Shots on target, %']))
         return cat_dict
 
     def main_position(self, player_row):

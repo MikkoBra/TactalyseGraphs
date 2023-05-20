@@ -8,8 +8,6 @@ import seaborn as sns
 
 from .abstract_models import Graph
 
-matplotlib.use('TkAgg')
-
 
 class LinePlot(Graph):
     __position = ''

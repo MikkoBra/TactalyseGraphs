@@ -1,7 +1,7 @@
 import io
-from math import ceil
 
 import matplotlib.pyplot as plt
+from matplotlib.offsetbox import AnnotationBbox, OffsetImage
 import numpy as np
 
 from .abstract_models import Graph
@@ -15,10 +15,11 @@ class RadarChart(Graph):
     __compare_fill = "#B6A7F7"
     __title = "#D46508"
     __subtitle = "#5E5E5E"
-    __left_pos = 0.17
-    __bottom_pos = 0.09
-    __plot_w = 0.65
-    __plot_h = 0.65
+    __left_pos = 0.19
+    __bottom_pos = 0.18
+    __plot_w = 0.6
+    __plot_h = 0.6
+    __num_labels = 6.0
 
     def __init__(self, param_map):
         player_pos = param_map.get('main_pos_long')
@@ -41,40 +42,109 @@ class RadarChart(Graph):
         values += values[:1]
         return player_data, player, values
 
-    def create_radar_chart(self, column_names, p1_values, p2_values):
+    def create_radar_chart(self, p1_values, p2_values, scales):
         # calculate the angles for each category
-        angles = [n / float(len(column_names)) * 2 * np.pi for n in range(len(column_names))]
-        angles += angles[:1]
+        n = len(p1_values)-1
+        angles = np.linspace(0, 2 * np.pi, n, endpoint=False).tolist()
+        angles += angles[:1]  # Close the loop
 
         # create the radar chart
-        fig = plt.figure(figsize=(6, 6))
+        fig = plt.figure(figsize=(8, 8))
         ax = fig.add_axes([self.__left_pos, self.__bottom_pos, self.__plot_w, self.__plot_h], projection='polar')
 
+        p1_data_normalized = [d / scale for d, scale in zip(p1_values, scales)]
+        p1_data_normalized += p1_data_normalized[:1]  # Close the loop
+
+        p2_data_normalized = None
+        if p2_values is not None:
+            p2_data_normalized = [d / scale for d, scale in zip(p2_values, scales)]
+            p2_data_normalized += p2_data_normalized[:1]  # Close the loop
+
+        return fig, ax, angles, p1_data_normalized, p2_data_normalized
+
+    def get_scale_labels(self, scales, num_labels):
+        labels = []
+        for scale in scales:
+            y_vals = np.linspace(0, scale, int(num_labels)).tolist()
+            fraction = scale / float(num_labels)
+            if fraction >= 1:
+                y_vals = [round(value, 2) for value in y_vals]
+            else:
+                decimals = 0
+                while fraction < 1.0:
+                    fraction *= 10
+                    decimals += 1
+                y_vals = [round(value, decimals + 1) for value in y_vals]
+            labels.append(y_vals)
+        return labels
+
+    def plot_player(self, ax, player, player_values, angles, color):
+        ax.plot(angles, player_values, linewidth=1, linestyle='solid', label=player, color=color)
+        ax.fill(angles, player_values, alpha=0.25, color=color)
+
+        return ax
+
+    def print_stat_labels(self, ax, angles, column_names):
         ax.set_theta_offset(np.pi / 2)
         ax.set_theta_direction(-1)
         ax.spines['polar'].set_visible(False)
-        max_val = max(p1_values)
-        if p2_values is not None:
-            max_val = max(max_val, max(p2_values))
-        ax.set_ylim(0, ceil(max_val / 10) * 10)
         ax.set_xticks(angles[:-1])
-        ax.set_xticklabels(column_names)
+        ax.set_xticklabels([])
         ax.yaxis.grid(True)
-        return fig, ax, angles
 
-    def plot_player(self, ax, player_values, angles, color):
-        ax.plot(angles, player_values, linewidth=1, linestyle='solid', color=color)
-        ax.fill(angles, player_values, color, alpha=0.1)
+        for label, angle, column_name in zip(ax.get_xticklabels(), angles, column_names):
+            x, y = label.get_position()
+            # Increase offset with respect to distance from vertical (angle = 0 or pi)
+            vertical = np.pi
+            if angle < abs(np.pi - angle):
+                vertical = 0.0
+            elif abs(2*np.pi - angle) < abs(angle - np.pi):
+                vertical = 2 * np.pi
+            offset = 0.2 * (0 + (abs(angle - vertical) / (np.pi/2))) + 0.03
+            lab = ax.text(x, y - offset, column_name, transform=label.get_transform(),
+                          ha=label.get_ha(), va=label.get_va())
         return ax
 
-    def set_layout(self, ax, p1, p2, team, matches):
+    def print_scales(self, ax, angles, scale_labels, player_vals):
+        # Clear the auto-generated y-ticks
+        ax.set_yticklabels([])
+
+        # Code for showing scales
+        origin_placed = False
+        for i, label in enumerate(scale_labels):
+            angle = angles[i]
+            radius = max(player_vals) * 1.1  # Adjust the radius for placing the labels
+
+            for j, value in enumerate(label):
+                # Don't print 0 to avoid clutter in middle
+                if value == 0.00:
+                    continue
+                # Calculate the position of the label
+                x = angle
+                y = (radius / len(label)) * (j + 0.5)
+
+                # Place the label on the plot
+                ax.text(x, y, str(value), ha='center', va='center', fontsize=8, color='black')
+
+        return ax
+
+    def set_layout(self, ax, p1, p2, team, matches, country):
         title = 'Radar chart for ' + p1 + ', a ' + self.__position
-        subtitle = "Team: " + team + "\n"
+        subtitle = ""
+        subtitle += "Birth country: " + country + "\n"
+        subtitle += "Team: " + team + "\n"
         subtitle += "Matches played: " + str(matches) + "\n"
         if p2 is not None:
             subtitle += "Compared with " + p2 + "\n"
-        plt.suptitle(subtitle, fontsize=12, y=0.92, color=self.__subtitle)
-        ax.set_title(title, fontsize=15, fontweight=0, color=self.__tactalyse, weight="bold", y=1.3)
+        plt.suptitle(subtitle, fontsize=12, y=0.95, color=self.__subtitle)
+        ax.set_title(title, fontsize=15, fontweight=0, color=self.__tactalyse, weight="bold", y=1.28)
+
+        path = "graph_app/files/images/Logo_Tactalyse_Stats.png"
+        arr_img = plt.imread(path)
+        im = OffsetImage(arr_img, zoom=0.03)
+        ab = AnnotationBbox(im, (0.5, -0.2), xycoords='axes fraction', frameon=False)
+        ax.add_artist(ab)
+
         return ax
 
     def draw(self, param_map):
@@ -83,16 +153,25 @@ class RadarChart(Graph):
         p1_data, p1, p1_values = self.get_player_data(column_names, param_map)
         p2_data, p2, p2_values = self.get_player_data(column_names, param_map, True)
 
-        fig, ax, angles = self.create_radar_chart(column_names, p1_values, p2_values)
+        scales = param_map.get('scales')
+        fig, ax, angles, p1_values, p2_values = self.create_radar_chart(p1_values, p2_values, scales)
 
         # plot the values on the radar chart
+        ax = self.plot_player(ax, p1, p1_values, angles, self.__tactalyse)
         if p2_values is not None:
-            ax = self.plot_player(ax, p2_values, angles, self.__compare)
-        ax = self.plot_player(ax, p1_values, angles, self.__tactalyse)
+            ax = self.plot_player(ax, p2, p2_values, angles, self.__compare)
+
+        ax = self.print_stat_labels(ax, angles, column_names)
+
+        scale_labels = self.get_scale_labels(scales, self.__num_labels)
+        ax = self.print_scales(ax, angles, scale_labels, p1_values)
 
         team = param_map.get('player_row')['Team'].iloc[0]
         matches = param_map.get('player_row')['Matches played'].iloc[0]
-        ax = self.set_layout(ax, p1, p2, team, matches)
+        country = param_map.get('player_row')['Birth country'].iloc[0]
+        ax = self.set_layout(ax, p1, p2, team, matches, country)
+
+        plt.legend(bbox_to_anchor=(1.1, 1.15), loc='upper center')
 
         # Save the plot to a file
         buffer = io.BytesIO()

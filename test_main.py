@@ -34,8 +34,8 @@ def test_line():
 def test_radar():
     param_map = {"type": "radar",
                  "league": "eng2",
-                 "player": "Kiko Femenía",
-                 "compare": "E. Buendía"}
+                 "player": "D. Solanke",
+                 "compare": "João Pedro"}
 
     data_connector = DataConnector()
     data_map = data_connector.get_data(param_map)
@@ -46,5 +46,5 @@ def test_radar():
 
 
 if __name__ == "__main__":
-    # test_line()
+    test_line()
     test_radar()

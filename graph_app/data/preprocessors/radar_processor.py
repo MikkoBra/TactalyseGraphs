@@ -76,4 +76,10 @@ class RadarProcessor(Preprocessor):
         main_pos = radar_map['main_pos']
         columns = self.get_columns_radar_chart(main_pos)
         radar_map.update({'columns': columns})
+
+        league_data = self.__reader.all_league_data(radar_map.get('league'))
+        max_vals_df = league_data[columns].max(axis=0)
+        max_vals = max_vals_df.tolist()
+        radar_map.update({'scales': max_vals})
+
         return radar_map
