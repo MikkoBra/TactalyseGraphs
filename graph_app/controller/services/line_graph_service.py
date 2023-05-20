@@ -19,6 +19,7 @@ class LineGraphService(Service):
 
         league = payload.get('league')
         player = payload.get('player')
+        compare = payload.get('compare')
         stat = payload.get('stat')
         start_date = payload.get('start-date')
         end_date = payload.get('end-date')
@@ -26,6 +27,7 @@ class LineGraphService(Service):
         param_map = {"type": "line",
                      "league": league,
                      "player": player,
+                     "compare": compare,
                      "stat": stat,
                      "start_date": start_date,
                      "end_date": end_date}
@@ -35,6 +37,7 @@ class LineGraphService(Service):
     def key_value_process(self, files, form):
         league = form.get('league')
         player = form.get('player')
+        compare = form.get('compare')
         stat = form.get('stat')
         start_date = form.get('start-date')
         end_date = form.get('end-date')
@@ -42,6 +45,7 @@ class LineGraphService(Service):
         param_map = {"type": "line",
                      "league": league,
                      "player": player,
+                     "compare": compare,
                      "stat": stat,
                      "start_date": start_date,
                      "end_date": end_date}

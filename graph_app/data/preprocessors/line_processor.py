@@ -58,7 +58,11 @@ class LineProcessor(Preprocessor):
         return line_map
 
     def set_league(self, param_map, line_map):
-        league = param_map['league'].upper()
+        league = param_map.get('league')
+        if league:
+            league = league.upper()
+        else:
+            league = "League"
         line_map.update({'league': league})
         return line_map
 
@@ -78,10 +82,10 @@ class LineProcessor(Preprocessor):
         return line_map
 
     def set_tactalyse_data(self, param_map, line_map):
-        start_date = param_map.get('start-date')
+        start_date = param_map.get('start_date')
         line_map.update({'start_date': start_date})
 
-        end_date = param_map.get('end-date')
+        end_date = param_map.get('end_date')
         line_map.update({'end_date': end_date})
         return line_map
 

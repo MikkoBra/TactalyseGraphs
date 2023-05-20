@@ -17,13 +17,14 @@ class RandomGraphService(Service):
         if payload is None:
             return Response("Error: invalid JSON payload.", 400, mimetype='application/json')
 
-        type = payload.get('graph-type')
+        graph_type = payload.get('graph-type')
         league = payload.get('league')
         player = payload.get('player')
         start_date = payload.get('start-date')
         end_date = payload.get('end-date')
 
-        param_map = {"type": type,
+        param_map = {"type": "random",
+                     "graph_type": graph_type,
                      "league": league,
                      "player": player,
                      "start_date": start_date,
@@ -38,7 +39,7 @@ class RandomGraphService(Service):
         start_date = form.get('start-date')
         end_date = form.get('end-date')
 
-        param_map = {"type": "radar",
+        param_map = {"type": "random",
                      "graph_type": graph_type,
                      "league": league,
                      "player": player,

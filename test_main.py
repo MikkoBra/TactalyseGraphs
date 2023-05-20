@@ -14,13 +14,14 @@ def show_plot(bytes):
 
 
 def test_line():
-    param_map = {"type": "line",
-                 "league": "eng2",
-                 "player": "C. Cathcart",
-                 "compare": "Kiko Femenía",
-                 "stat": "Defensive duels / won",
-                 "start-date": "2016-09-25",
-                 "end-date": "2020-12-23"}
+    param_map = {
+        "type": "line",
+        "player": "C. Cathcart",
+        "compare": "Kiko Femenía",
+        "stat": "Defensive duels / won",
+        "start_date": "2016-09-25",
+        "end_date": "2020-12-23"
+    }
 
     data_connector = DataConnector()
     data_map = data_connector.get_data(param_map)
@@ -45,7 +46,7 @@ def test_radar():
 
 def test_random():
     param_map = {"type": "random",
-                 "graph_type": "line"}
+                 "graph_type": "radar"}
 
     data_connector = DataConnector()
     data_map = data_connector.get_data(param_map)
@@ -56,6 +57,6 @@ def test_random():
 
 
 if __name__ == "__main__":
-    test_line()
-    test_radar()
+    # test_line()
+    # test_radar()
     test_random()

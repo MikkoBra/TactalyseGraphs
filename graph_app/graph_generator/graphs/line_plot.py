@@ -138,7 +138,7 @@ class LinePlot(Graph):
         if compare and isinstance(compare_data, pd.DataFrame):
             compare_x_values, _, _ = self.get_xlabels(compare_data)
             compare_stat_data = compare_data[column_name][::-1].reset_index(drop=True)
-            self.plot_player(ax, compare_x_values, compare_stat_data, player, column_name, self.__compare_color)
+            self.plot_player(ax, compare_x_values, compare_stat_data, compare, column_name, self.__compare_color)
 
         mean = np.mean(player_stat_data)
         label = "Mean for " + player
