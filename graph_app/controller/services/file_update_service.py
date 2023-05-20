@@ -1,7 +1,9 @@
+import base64
+
+from flask import request, Response
+
 from .abstract_service import Service
 from ...data.file_updater import FileUpdater
-from flask import request, Response
-import base64
 
 
 class FileUpdateService(Service):

@@ -1,7 +1,8 @@
+from flask import Response
+
 from .abstract_service import Service
 from ..connectors.data_connector import DataConnector
 from ..connectors.graph_connector import GraphConnector
-from flask import Response
 
 
 class LineGraphService(Service):

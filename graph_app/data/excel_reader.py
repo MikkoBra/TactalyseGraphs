@@ -1,11 +1,13 @@
-import pandas as pd
 import os
+
+import pandas as pd
 
 
 class ExcelReader:
     """
     Class that contains functionality related to reading data from Excel files.
     """
+
     def __init__(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))
         self.__source_folder = os.path.abspath(os.path.join(current_dir, '..', '..'))

@@ -1,9 +1,10 @@
 import io
+
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
 import pandas as pd
+import seaborn as sns
 
 from .abstract_models import Graph
 

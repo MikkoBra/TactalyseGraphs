@@ -1,7 +1,8 @@
+import random
+
+from graph_app.controller.connectors.abstract_connector import AbstractConnector
 from graph_app.data.preprocessors.line_processor import LineProcessor
 from graph_app.data.preprocessors.radar_processor import RadarProcessor
-from graph_app.controller.connectors.abstract_connector import AbstractConnector
-import random
 
 
 class DataConnector(AbstractConnector):

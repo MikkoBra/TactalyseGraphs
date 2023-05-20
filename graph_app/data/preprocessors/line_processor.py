@@ -1,6 +1,6 @@
-from ..excel_reader import ExcelReader
 from .preprocessor import Preprocessor
 from .randomizer import Randomizer
+from ..excel_reader import ExcelReader
 
 
 class LineProcessor(Preprocessor):
@@ -68,7 +68,6 @@ class LineProcessor(Preprocessor):
         line_map.update({'player_data': player_df})
 
         player_row = self.__reader.league_data(line_map.get('league'), player)
-        print(player, line_map.get('league'))
         main_pos = self.main_position(player_row)
         line_map.update({'main_pos': main_pos})
 

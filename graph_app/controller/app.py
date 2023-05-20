@@ -1,9 +1,9 @@
 from flask import Flask, request
+
 from .services.file_update_service import FileUpdateService
-from .services.random_graph_service import RandomGraphService
 from .services.line_graph_service import LineGraphService
 from .services.radar_graph_service import RadarGraphService
-import os
+from .services.random_graph_service import RandomGraphService
 
 app = Flask(__name__)
 

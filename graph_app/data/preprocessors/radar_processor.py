@@ -1,6 +1,6 @@
-from ..excel_reader import ExcelReader
 from .preprocessor import Preprocessor
 from .randomizer import Randomizer
+from ..excel_reader import ExcelReader
 
 
 class RadarProcessor(Preprocessor):

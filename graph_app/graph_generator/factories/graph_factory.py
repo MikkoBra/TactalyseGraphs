@@ -1,7 +1,8 @@
+import random
+
 from .abstract_graph_factory import AbstractGraphFactory
 from ..graphs.line_plot import LinePlot
 from ..graphs.radar_chart import RadarChart
-import random
 
 
 class GraphFactory(AbstractGraphFactory):
