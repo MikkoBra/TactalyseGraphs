@@ -35,24 +35,23 @@ class ExcelReader:
                     print("File found:", file_path)
                     return self.read_file(file_path)
         print("Player file not found.")
-        return pd.empty()
+        return pd.DataFrame()
 
     def league_data(self, league, player):
         """
         Function for extracting the football league data of a single player from an Excel file.
 
-        :param league_file: The Excel file containing league data.
-        :param player_name: The name of the player to extract.
+        :param player:
+        :param league:
         :return: A Pandas dataframe containing all data in the Excel file, including headers.
-        :raises KeyError: if the passed player name matches none of the names in the Excel file under the 'Player' col.
         """
         dataframe = self.all_league_data(league)
         if dataframe.empty:
-            return pd.empty()
+            return pd.DataFrame()
         try:
             player = dataframe.loc[dataframe['Player'] == player]
         except KeyError:
-            player = pd.empty()
+            player = pd.DataFrame()
         return player
 
     def all_league_data(self, league):
@@ -64,4 +63,4 @@ class ExcelReader:
                     print("File found:", file_path)
                     return self.read_file(file_path)
         print("League file not found.")
-        return pd.empty()
+        return pd.DataFrame()

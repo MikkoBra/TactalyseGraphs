@@ -28,9 +28,9 @@ class RadarProcessor(Preprocessor):
         radar_map = {'type': "radar"}
 
         radar_map = self.set_player(param_map, radar_map)
-        radar_map = self.set_compare(param_map, radar_map)
         radar_map = self.set_league(param_map, radar_map)
         radar_map = self.set_player_data(radar_map)
+        radar_map = self.set_compare(param_map, radar_map)
         radar_map = self.set_stats(radar_map)
 
         return radar_map
@@ -40,14 +40,6 @@ class RadarProcessor(Preprocessor):
         if not player:
             player = self.__randomizer.random_player()
         radar_map.update({'player': player})
-        return radar_map
-
-    def set_compare(self, param_map, radar_map):
-        if not param_map.get('compare'):
-            return radar_map
-
-        compare = param_map.get('compare')
-        radar_map.update({'compare': compare})
         return radar_map
 
     def set_league(self, param_map, radar_map):
@@ -67,6 +59,17 @@ class RadarProcessor(Preprocessor):
 
         main_pos = self.shortened_dictionary().get(main_pos)
         radar_map.update({'main_pos': main_pos})
+        return radar_map
+
+    def set_compare(self, param_map, radar_map):
+        if not param_map.get('compare'):
+            return radar_map
+
+        compare = param_map.get('compare')
+        radar_map.update({'compare': compare})
+
+        compare_df = self.__reader.league_data(radar_map['league'], compare)
+        radar_map.update({'compare_row': compare_df})
         return radar_map
 
     def set_stats(self, radar_map):

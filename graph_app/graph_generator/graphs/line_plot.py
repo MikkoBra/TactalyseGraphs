@@ -7,7 +7,7 @@ import pandas as pd
 
 from .abstract_models import Graph
 
-# matplotlib.use('TkAgg')
+matplotlib.use('TkAgg')
 
 
 class LinePlot(Graph):

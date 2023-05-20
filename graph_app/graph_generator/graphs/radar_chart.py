@@ -16,12 +16,27 @@ class RadarChart(Graph):
             self.__position = player_pos
 
     def draw(self, param_map):
-        data = param_map.get('player_row')
+        p1_data = param_map.get('player_row')
+        p1 = param_map.get('player')
         column_names = param_map.get('columns')
-        player = data.iloc[0]['Player']
+
         # create a list of the values for each category
-        data = data[column_names]
-        values = data.iloc[0].tolist()
+        p1_data = p1_data[column_names]
+        values = p1_data.iloc[0].tolist()
+        # close the loop for the radar chart
+        values += values[:1]
+
+        # do same for compare player
+        p2_data = param_map.get('compare_row')
+        if p2_data is not None:
+            p2 = param_map.get('compare')
+            p2_data = p2_data[column_names]
+            p2_values = p2_data.iloc[0].tolist()
+            p2_values += p2_values[:1]
+
+        # create a list of the values for each category
+        p1_data = p1_data[column_names]
+        values = p1_data.iloc[0].tolist()
         # close the loop for the radar chart
         values += values[:1]
 
@@ -35,15 +50,22 @@ class RadarChart(Graph):
         ax.set_theta_direction(-1)
         ax.spines['polar'].set_visible(False)
         max_val = max(values)
+        if p2_data is not None:
+            max_val = max(max_val, max(p2_values))
         ax.set_ylim(0, ceil(max_val / 10) * 10)
         ax.set_xticks(angles[:-1])
         ax.set_xticklabels(column_names)
         ax.yaxis.grid(True)
-        ax.set_title('Radar chart for ' + player + ', a ' + self.__position)
+        ax.set_title('Radar chart for ' + p1 + ', a ' + self.__position)
 
         # plot the values on the radar chart
         ax.plot(angles, values, linewidth=1, linestyle='solid')
         ax.fill(angles, values, 'b', alpha=0.1)
+
+        # plot p2's values on the radar chart
+        if p2_data is not None:
+            ax.plot(angles, p2_values, linewidth=1, linestyle='solid')
+            ax.fill(angles, p2_values, 'r', alpha=0.1)
 
         # Save the plot to a file
         buffer = io.BytesIO()
