@@ -9,6 +9,16 @@ from .abstract_models import Graph
 
 class RadarChart(Graph):
     """ Class representing a default Graph """
+    __tactalyse = "#EC4A24"
+    __player_fill = "#F7B6A7"
+    __compare = "#4A24EC"
+    __compare_fill = "#B6A7F7"
+    __title = "#D46508"
+    __subtitle = "#5E5E5E"
+    __left_pos = 0.17
+    __bottom_pos = 0.09
+    __plot_w = 0.65
+    __plot_h = 0.65
 
     def __init__(self, param_map):
         player_pos = param_map.get('main_pos_long')
@@ -37,7 +47,9 @@ class RadarChart(Graph):
         angles += angles[:1]
 
         # create the radar chart
-        fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
+        fig = plt.figure(figsize=(6, 6))
+        ax = fig.add_axes([self.__left_pos, self.__bottom_pos, self.__plot_w, self.__plot_h], projection='polar')
+
         ax.set_theta_offset(np.pi / 2)
         ax.set_theta_direction(-1)
         ax.spines['polar'].set_visible(False)
@@ -50,13 +62,19 @@ class RadarChart(Graph):
         ax.yaxis.grid(True)
         return fig, ax, angles
 
-    def plot_player(self, ax, player_values, angles):
-        ax.plot(angles, player_values, linewidth=1, linestyle='solid')
-        ax.fill(angles, player_values, 'b', alpha=0.1)
+    def plot_player(self, ax, player_values, angles, color):
+        ax.plot(angles, player_values, linewidth=1, linestyle='solid', color=color)
+        ax.fill(angles, player_values, color, alpha=0.1)
         return ax
 
-    def set_layout(self, ax, p1):
-        ax.set_title('Radar chart for ' + p1 + ', a ' + self.__position)
+    def set_layout(self, ax, p1, p2, team, matches):
+        title = 'Radar chart for ' + p1 + ', a ' + self.__position
+        subtitle = "Team: " + team + "\n"
+        subtitle += "Matches played: " + str(matches) + "\n"
+        if p2 is not None:
+            subtitle += "Compared with " + p2 + "\n"
+        plt.suptitle(subtitle, fontsize=12, y=0.92, color=self.__subtitle)
+        ax.set_title(title, fontsize=15, fontweight=0, color=self.__tactalyse, weight="bold", y=1.3)
         return ax
 
     def draw(self, param_map):
@@ -68,11 +86,13 @@ class RadarChart(Graph):
         fig, ax, angles = self.create_radar_chart(column_names, p1_values, p2_values)
 
         # plot the values on the radar chart
-        ax = self.plot_player(ax, p1_values, angles)
         if p2_values is not None:
-            ax = self.plot_player(ax, p2_values, angles)
+            ax = self.plot_player(ax, p2_values, angles, self.__compare)
+        ax = self.plot_player(ax, p1_values, angles, self.__tactalyse)
 
-        ax = self.set_layout(ax, p1)
+        team = param_map.get('player_row')['Team'].iloc[0]
+        matches = param_map.get('player_row')['Matches played'].iloc[0]
+        ax = self.set_layout(ax, p1, p2, team, matches)
 
         # Save the plot to a file
         buffer = io.BytesIO()

@@ -46,5 +46,5 @@ def test_radar():
 
 
 if __name__ == "__main__":
-    test_line()
+    # test_line()
     test_radar()
