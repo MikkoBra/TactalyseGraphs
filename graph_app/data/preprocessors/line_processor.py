@@ -67,9 +67,11 @@ class LineProcessor(Preprocessor):
         player_df = self.__reader.player_data(player)
         line_map.update({'player_data': player_df})
 
-        player_row = self.__reader.league_data(line_map.get('league'), player)
-        main_pos = self.main_position(player_row)
+        main_pos = self.main_position_player_file(player_df)
         line_map.update({'main_pos': main_pos})
+
+        player_pos = self.position_dictionary().get(main_pos)
+        line_map.update({'player_pos': player_pos})
 
         main_pos_short = self.shortened_dictionary().get(main_pos)
         line_map.update({'main_pos_short': main_pos_short})

@@ -3,7 +3,6 @@ from graph_app.controller.connectors.graph_connector import GraphConnector
 import io
 from PIL import Image
 
-
 def show_plot(bytes):
     stream = io.BytesIO(bytes)
 
@@ -17,8 +16,8 @@ def show_plot(bytes):
 def test_line():
     param_map = {"type": "line",
                  "league": "eng2",
-                 "player": "Kiko Femenía",
-                 "compare": "C. Cathcart",
+                 "player": "C. Cathcart",
+                 "compare": "Kiko Femenía",
                  "stat": "Defensive duels / won",
                  "start-date": "2016-09-25",
                  "end-date": "2020-12-23"}
@@ -33,9 +32,19 @@ def test_line():
 
 def test_radar():
     param_map = {"type": "radar",
-                 "league": "eng2",
                  "player": "D. Solanke",
-                 "compare": "João Pedro"}
+                 "compare": "E. Haaland"}
+
+    data_connector = DataConnector()
+    data_map = data_connector.get_data(param_map)
+
+    graph_connector = GraphConnector()
+    graph = graph_connector.get_data(data_map)
+    show_plot(graph)
+
+
+def test_random():
+    param_map = {"type": "test"}
 
     data_connector = DataConnector()
     data_map = data_connector.get_data(param_map)
@@ -48,3 +57,4 @@ def test_radar():
 if __name__ == "__main__":
     test_line()
     test_radar()
+    test_random()

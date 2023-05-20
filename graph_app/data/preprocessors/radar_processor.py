@@ -26,12 +26,17 @@ class RadarProcessor(Preprocessor):
                  (columns), main position of the passed player (main_pos_long), and the position abbreviated (main_pos).
         """
         radar_map = {'type': "radar"}
+        league_df = param_map.get('league_df')
+        if league_df is None:
+            league_df = self.__reader.all_league_data()
+            league_df = league_df.fillna(0.0)
+            param_map['league_df'] = league_df
+            print("Extracted data into dataframe")
 
         radar_map = self.set_player(param_map, radar_map)
-        radar_map = self.set_league(param_map, radar_map)
-        radar_map = self.set_player_data(radar_map)
-        radar_map = self.set_compare(param_map, radar_map)
-        radar_map = self.set_stats(radar_map)
+        radar_map = self.set_player_data(league_df, radar_map)
+        radar_map = self.set_compare(param_map, league_df, radar_map)
+        radar_map = self.set_stats(league_df, radar_map)
 
         return radar_map
 
@@ -42,18 +47,12 @@ class RadarProcessor(Preprocessor):
         radar_map.update({'player': player})
         return radar_map
 
-    def set_league(self, param_map, radar_map):
-        league = param_map['league'].upper()
-        radar_map.update({'league': league})
-        return radar_map
-
-    def set_player_data(self, radar_map):
-        league = radar_map.get('league')
+    def set_player_data(self, league_df, radar_map):
         player = radar_map.get('player')
-        player_row = self.__reader.league_data(league, player)
+        player_row = self.__reader.league_data(player, league_df)
         radar_map.update({'player_row': player_row})
 
-        main_pos = self.main_position(player_row)
+        main_pos = self.main_position_league_file(player_row)
         main_pos_long = self.position_dictionary().get(main_pos)
         radar_map.update({'main_pos_long': main_pos_long})
 
@@ -61,24 +60,23 @@ class RadarProcessor(Preprocessor):
         radar_map.update({'main_pos': main_pos})
         return radar_map
 
-    def set_compare(self, param_map, radar_map):
+    def set_compare(self, param_map, league_df, radar_map):
         if not param_map.get('compare'):
             return radar_map
 
         compare = param_map.get('compare')
         radar_map.update({'compare': compare})
 
-        compare_df = self.__reader.league_data(radar_map['league'], compare)
+        compare_df = self.__reader.league_data(compare, league_df)
         radar_map.update({'compare_row': compare_df})
         return radar_map
 
-    def set_stats(self, radar_map):
+    def set_stats(self, league_df, radar_map):
         main_pos = radar_map['main_pos']
         columns = self.get_columns_radar_chart(main_pos)
         radar_map.update({'columns': columns})
 
-        league_data = self.__reader.all_league_data(radar_map.get('league'))
-        max_vals_df = league_data[columns].max(axis=0)
+        max_vals_df = league_df[columns].max(axis=0)
         max_vals = max_vals_df.tolist()
         radar_map.update({'scales': max_vals})
 

@@ -78,10 +78,13 @@ class RadarChart(Graph):
             labels.append(y_vals)
         return labels
 
+    def check_zeroes(self, player_vals):
+        all_zeroes = all(element == 0 for element in player_vals)
+        return all_zeroes
+
     def plot_player(self, ax, player, player_values, angles, color):
         ax.plot(angles, player_values, linewidth=1, linestyle='solid', label=player, color=color)
         ax.fill(angles, player_values, alpha=0.25, color=color)
-
         return ax
 
     def print_stat_labels(self, ax, angles, column_names):
@@ -132,7 +135,7 @@ class RadarChart(Graph):
         title = 'Radar chart for ' + p1 + ', a ' + self.__position
         subtitle = ""
         subtitle += "Birth country: " + country + "\n"
-        subtitle += "Team: " + team + "\n"
+        subtitle += "Team: " + str(team) + "\n"
         subtitle += "Matches played: " + str(matches) + "\n"
         if p2 is not None:
             subtitle += "Compared with " + p2 + "\n"
@@ -157,8 +160,12 @@ class RadarChart(Graph):
         fig, ax, angles, p1_values, p2_values = self.create_radar_chart(p1_values, p2_values, scales)
 
         # plot the values on the radar chart
+        if self.check_zeroes(p1_values):
+            raise ValueError("Player " + p1 + " had only NA entries.")
         ax = self.plot_player(ax, p1, p1_values, angles, self.__tactalyse)
         if p2_values is not None:
+            if self.check_zeroes(p2_values):
+                raise ValueError("Player " + p2 + " had only NA entries.")
             ax = self.plot_player(ax, p2, p2_values, angles, self.__compare)
 
         ax = self.print_stat_labels(ax, angles, column_names)

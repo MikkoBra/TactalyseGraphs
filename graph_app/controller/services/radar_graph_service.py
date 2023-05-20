@@ -3,6 +3,7 @@ from flask import Response
 from .abstract_service import Service
 from ..connectors.data_connector import DataConnector
 from ..connectors.graph_connector import GraphConnector
+from graph_app.data.excel_reader import ExcelReader
 
 
 class RadarGraphService(Service):
@@ -16,24 +17,20 @@ class RadarGraphService(Service):
         if payload is None:
             return Response("Error: invalid JSON payload.", 400, mimetype='application/json')
 
-        league = payload.get('league')
         player = payload.get('player')
         compare = payload.get('compare')
 
         param_map = {"type": "radar",
-                     "league": league,
                      "player": player,
                      "compare": compare}
 
         return self.pass_data(param_map)
 
     def key_value_process(self, files, form):
-        league = form.get('league')
         player = form.get('player')
         compare = form.get('compare')
 
         param_map = {"type": "radar",
-                     "league": league,
                      "player": player,
                      "compare": compare}
 

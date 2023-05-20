@@ -1,4 +1,4 @@
-from ..excel_reader import ExcelReader
+from collections import Counter
 
 
 class Preprocessor:
@@ -52,34 +52,34 @@ class Preprocessor:
         cat_dict = dict.fromkeys(['GK'], ['Shots blocked per 90', 'Long passes per 90',
                                           'Accurate long passes, %', 'Key passes per 90',
                                           'Smart passes per 90', 'Accurate smart passes, %',
-                                          'Aerial duels won, %'])
+                                          'Aerial duels won, %', 'Clean sheets'])
         cat_dict.update(dict.fromkeys(['FB'], ['Sliding tackles per 90', 'Interceptions per 90',
                                                'Crosses per 90', 'Accurate crosses, %',
                                                'Defensive duels per 90', 'Defensive duels won, %',
-                                               'Pass accuracy (%)', 'Key passes per 90']))
+                                               'Accurate passes, %', 'Key passes per 90']))
         cat_dict.update(dict.fromkeys(['CB'], ['Shots blocked per 90', 'Interceptions per 90',
-                                               'Pass accuracy (%)', 'Aerial duels won, %',
+                                               'Accurate passes, %', 'Aerial duels won, %',
                                                'Defensive duels per 90', 'Defensive duels won, %',
                                                'Crosses per 90', 'Dribbles per 90']))
         cat_dict.update(dict.fromkeys(['DM'], ['Sliding tackles per 90', 'Interceptions per 90',
                                                'Crosses per 90', 'Accurate crosses, %',
                                                'Defensive duels per 90', 'Defensive duels won, %',
-                                               'Pass accuracy (%)', 'Key passes per 90']))
+                                               'Accurate passes, %', 'Key passes per 90']))
         cat_dict.update(dict.fromkeys(['AM'], ['Progressive runs per 90', 'Assists per 90',
                                                'Offensive duels won, %', 'Key passes per 90',
-                                               'Pass accuracy (%)', 'Goals per 90',
+                                               'Accurate passes, %', 'Goals per 90',
                                                'Shots per 90', 'Shots on target, %']))
         cat_dict.update(dict.fromkeys(['WI'], ['Crosses per 90', 'Assists per 90',
                                                'Offensive duels won, %', 'Key passes per 90',
-                                               'Pass accuracy (%)', 'Goals per 90',
+                                               'Accurate passes, %', 'Goals per 90',
                                                'Shots per 90', 'Shots on target, %']))
         cat_dict.update(dict.fromkeys(['ST'], ['Successful dribbles, %', 'Assists per 90',
-                                               'Key passes per 90', 'xG/Shot',
-                                               'Pass accuracy (%)', 'Goals per 90',
+                                               'Key passes per 90', 'xG',
+                                               'Accurate passes, %', 'Goals per 90',
                                                'Shots per 90', 'Shots on target, %']))
         return cat_dict
 
-    def main_position(self, player_row):
+    def main_position_league_file(self, player_row):
         """
         Function that retrieves the main position of a football player.
 
@@ -90,17 +90,19 @@ class Preprocessor:
         first_position = player_positions.split(', ')[0]
         return first_position
 
-    def in_league(self, league_file, player_name):
+    def main_position_player_file(self, player_df):
         """
-        Function that checks if the player is included in the league file
+        Function that retrieves the main position of a football player.
 
-        :param league_file:
-        :param player_name:
-        :return: True if they're in the league file, false if not
+        :param player_row: Dataframe containing the league data of a single player.
+        :return: The first position in the list of player positions.
         """
-
-        league_df = ExcelReader().all_league_data(league_file)
-        if player_name in league_df['Player'].values:
-            return True
-        else:
-            return False
+        positions = []
+        for entry in player_df['Position']:
+            if not isinstance(entry, str):
+                continue
+            separated_positions = entry.split(', ')
+            positions.extend(separated_positions)
+        position_counter = Counter(positions)
+        most_common = position_counter.most_common(1)[0][0]
+        return most_common

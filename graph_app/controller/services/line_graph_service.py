@@ -3,6 +3,7 @@ from flask import Response
 from .abstract_service import Service
 from ..connectors.data_connector import DataConnector
 from ..connectors.graph_connector import GraphConnector
+from graph_app.data.excel_reader import ExcelReader
 
 
 class LineGraphService(Service):

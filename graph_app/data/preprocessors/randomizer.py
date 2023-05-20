@@ -2,16 +2,49 @@ import os
 import random
 
 from ..text_cleaner import TextCleaner
+from graph_app.data.excel_reader import ExcelReader
+from .preprocessor import Preprocessor
 
 
-class Randomizer:
+class Randomizer(Preprocessor):
     def __init__(self):
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        self.__source_folder = os.path.abspath(os.path.join(current_dir, '..', '..', '..'))
         self.__cleaner = TextCleaner()
+        self.__reader = ExcelReader()
+
+    def set_random_parameters(self, param_map):
+        if param_map.get('type') == "radar":
+            league_df = self.__reader.all_league_data()
+            league_df = league_df.fillna(0.0)
+            param_map['league_df'] = league_df
+            print("Extracted data into dataframe")
+
+        if param_map.get('player') is None:
+            if param_map['type'] == "line":
+                param_map['player'] = self.random_player()
+            else:
+                league_df = param_map['league_df']
+                random_value = league_df['Player'].sample(n=1).values[0]
+                param_map['player'] = random_value
+
+        if param_map.get('type') == "radar" and param_map.get('compare') is None:
+            league_df = param_map['league_df']
+            player_pos = self.main_position_league_file(self.__reader.league_data(param_map['player'], league_df))
+            position_df = league_df[league_df['Position'].str.contains(player_pos)]
+            random_player = param_map['player']
+            while random_player == param_map['player']:
+                random_player = position_df['Player'].sample(n=1).values[0]
+            param_map['compare'] = random_player
+
+        if param_map['type'] == "line" and param_map.get('stat') is None:
+            param_map['stat'] = self.random_player_stat()
+
+        if param_map.get('league') is None:
+            param_map['league'] = "rando2"
+
+        return param_map
 
     def random_player(self):
-        files_folder = os.path.join(self.__source_folder, 'graph_app', 'files', 'players')
+        files_folder = "graph_app/files/players"
         player_files = os.listdir(files_folder)
 
         random_player_file = random.choice(player_files)
