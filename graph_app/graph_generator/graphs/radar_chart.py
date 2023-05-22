@@ -132,7 +132,10 @@ class RadarChart(Graph):
         return ax
 
     def set_layout(self, ax, p1, p2, team, matches, country):
-        title = 'Radar chart for ' + p1 + ', a ' + self.__position
+        determinant = ', a '
+        if self.__position[0].lower() in ['a', 'e', 'i', 'o', 'u']:
+            determinant = ', an '
+        title = 'Radar chart for ' + p1 + determinant + self.__position
         subtitle = ""
         subtitle += "Birth country: " + country + "\n"
         subtitle += "Team: " + str(team) + "\n"

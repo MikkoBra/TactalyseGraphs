@@ -12,4 +12,4 @@ class RadarChartFactory(AbstractGraphFactory):
             print("To be implemented.")
             return RadarChart(params)
         else:
-            return RadarChart()
+            return RadarChart({})

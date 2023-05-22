@@ -115,7 +115,10 @@ class LinePlot(Graph):
         return ax
 
     def set_layout(self, ax, p1, p2, stat):
-        title = 'Line plot for ' + p1 + ', a ' + self.__position
+        determinant = ', a '
+        if self.__position[0].lower() in ['a', 'e', 'i', 'o', 'u']:
+            determinant = ', an '
+        title = 'Line plot for ' + p1 + determinant + self.__position
         subtitle = ""
         if p2 is not None:
             subtitle += "Compared with " + p2 + "\n"
