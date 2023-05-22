@@ -14,7 +14,9 @@ class LinePlot(Graph):
     __tactalyse = "#EC4A24"
     __black = "#242424"
     __player_color = '#EC4A24'
+    __player_sub_color = '#5e1d0e'
     __compare_color = '#4a24ec'
+    __compare_sub_color = '#1d0e5e'
     __title = "#D46508"
     __subtitle = "#5E5E5E"
     __bottom_offset = 0.2
@@ -65,10 +67,22 @@ class LinePlot(Graph):
     def create_plot(self, ax, dates_x_values, data, color, label, order):
         sns.lineplot(x=dates_x_values, y=data, ax=ax, color=color, label=label, zorder=order, linewidth=1)
 
-    def plot_player(self, ax, player_x_values, player_stat_data, player, stat, color):
+    def create_sub_plot_data(self, subcolumns, player_data, column_index):
+        player_sub_data, second_column = None, None
+        if len(subcolumns) > 1:
+            second_column = subcolumns[1].strip()
+            player_sub_data = player_data[player_data.columns[column_index + 1]][::-1].reset_index(drop=True)
+        return player_sub_data, second_column
+
+    def plot_player(self, ax, player_x_values, player_stat_data, player, stat, color, player_sub_data=None,
+                    sub_stat=None, sub_color=None):
         x_vals, y_vals = self.average_entries(player_x_values, player_stat_data)
         label = stat + " for " + player
         self.create_plot(ax, x_vals, y_vals, color, label, order=1)
+        if player_sub_data is not None:
+            x_vals, y_vals = self.average_entries(player_x_values, player_sub_data)
+            label = sub_stat.capitalize() + " for " + player
+            self.create_plot(ax, x_vals, y_vals, sub_color, label, order=1)
 
     def draw_years(self, ax, year_x_values, years):
         plt.xlabel("Year")
@@ -126,19 +140,29 @@ class LinePlot(Graph):
         compare = param_map.get('compare')
         compare_data = param_map.get('compare_data')
 
-        fig, ax = plt.subplots(figsize=(8, 8), gridspec_kw={'top': self.__top_offset, 'bottom': self.__bottom_offset,
+        fig, ax = plt.subplots(figsize=(8, 6), gridspec_kw={'top': self.__top_offset, 'bottom': self.__bottom_offset,
                                                             'left': self.__left_offset, 'right': self.__right_offset})
         ax.clear()
+        fig.set_facecolor('#EDEDED')
 
         player_x_values, year_x_values, years = self.get_xlabels(player_data)
-        player_stat_data = player_data[column_name][::-1].reset_index(drop=True)
+        subcolumns = column_name.split("/")
+        column_index = player_data.columns.get_loc(column_name)
+        player_stat_data = player_data[player_data.columns[column_index]][::-1].reset_index(drop=True)
 
-        self.plot_player(ax, player_x_values, player_stat_data, player, column_name, self.__player_color)
+        player_sub_data, second_column = self.create_sub_plot_data(subcolumns, player_data, column_index)
+
+        self.plot_player(ax, player_x_values, player_stat_data, player, subcolumns[0],
+                         self.__player_color, player_sub_data, second_column, self.__player_sub_color)
 
         if compare and isinstance(compare_data, pd.DataFrame):
             compare_x_values, _, _ = self.get_xlabels(compare_data)
             compare_stat_data = compare_data[column_name][::-1].reset_index(drop=True)
-            self.plot_player(ax, compare_x_values, compare_stat_data, compare, column_name, self.__compare_color)
+
+            compare_sub_data, second_column = self.create_sub_plot_data(subcolumns, compare_data, column_index)
+
+            self.plot_player(ax, compare_x_values, compare_stat_data, compare, subcolumns[0],
+                             self.__compare_color, compare_sub_data, second_column, self.__compare_sub_color)
 
         mean = np.mean(player_stat_data)
         label = "Mean for " + player
