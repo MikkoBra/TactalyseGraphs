@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import patch, MagicMock, Mock
+from unittest.mock import patch, MagicMock
 from graph_app.controller.connectors.data_connector import DataConnector
 from graph_app.data.preprocessors.randomizer import Randomizer
 
