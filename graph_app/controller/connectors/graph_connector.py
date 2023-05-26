@@ -9,7 +9,7 @@ class GraphConnector:
         """
         Function that retrieves a drawn radio chart for further use.
 
-        :param radar_map:
+        :param param_map:
         :return: The radio chart drawn based on passed parameters, in byte form.
         """
         factory = GraphFactory()

@@ -16,8 +16,8 @@ def show_plot(bytes):
 def test_line():
     param_map = {
         "type": "line",
-        "player": "C. Cathcart",
-        "compare": "Kiko Femenía",
+        "compare": "C. Cathcart",
+        "player": "Kiko Femenía",
         "stat": "Defensive duels / won",
         "start_date": "2016-09-25",
         "end_date": "2020-12-23"
@@ -56,6 +56,6 @@ def test_random():
 
 
 if __name__ == "__main__":
-    # test_line()
+    test_line()
     # test_radar()
-    test_random()
+    # test_random()
