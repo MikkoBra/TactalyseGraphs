@@ -33,7 +33,8 @@ def test_line():
 
 def test_radar():
     param_map = {"type": "radar",
-                 "player": "Bruno Fernandes"}
+                 "player": "D. Solanke",
+                 "compare": "E. Haaland"}
 
     data_connector = DataConnector()
     data_map = data_connector.get_data(param_map)
@@ -56,6 +57,6 @@ def test_random():
 
 
 if __name__ == "__main__":
-    test_line()
-    # test_radar()
+    # test_line()
+    test_radar()
     # test_random()

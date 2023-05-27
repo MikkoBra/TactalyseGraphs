@@ -22,9 +22,11 @@ class RadarChart(Graph):
     __num_labels = 6.0
 
     def __init__(self, param_map):
-        player_pos = param_map.get('main_pos_long')
+        player_pos = param_map.get('player_pos')
         if player_pos:
             self.__position = player_pos
+        else:
+            self.__position = "Player"
 
     def get_player_data(self, column_names, param_map, compare=False):
         if not compare:

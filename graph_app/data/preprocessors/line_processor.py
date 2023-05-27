@@ -29,7 +29,8 @@ class LineProcessor(Preprocessor):
 
     def extract_line_data(self, param_map):
         """
-        Function that takes the name of the player from the passed parameter map, and generates a line plot.
+        Function that takes information of the player from the passed parameter map, and generates a map containing
+        data processed for use by the graph module.
 
         :param param_map: Parameter map containing information that should be used to create the graph. The player's
         name (player) is required. Optional parameters are the name of the player to compare to (compare), the
@@ -63,7 +64,7 @@ class LineProcessor(Preprocessor):
         """
         player = param_map.get('player')
         if not player:
-            player = self.__randomizer.random_player()
+            player = self.__randomizer.random_player_line()
         line_map.update({'player': player})
         return line_map
 

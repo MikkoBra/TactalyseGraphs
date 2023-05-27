@@ -20,7 +20,7 @@ class Randomizer(Preprocessor):
 
         if param_map.get('player') is None:
             if param_map['graph_type'] == "line":
-                param_map['player'] = self.random_player()
+                param_map['player'] = self.random_player_line()
             else:
                 league_df = param_map['league_df']
                 random_value = league_df['Player'].sample(n=1).values[0]
@@ -29,11 +29,7 @@ class Randomizer(Preprocessor):
         if param_map.get('graph_type') == "radar" and param_map.get('compare') is None:
             league_df = param_map['league_df']
             player_pos = self.main_position_league_file(self.__reader.league_data(param_map['player'], league_df))
-            position_df = league_df[league_df['Position'].str.contains(player_pos)]
-            random_player = param_map['player']
-            while random_player == param_map['player']:
-                random_player = position_df['Player'].sample(n=1).values[0]
-            param_map['compare'] = random_player
+            param_map['compare'] = self.random_compare_radar(league_df, player_pos, param_map.get('player'))
 
         if param_map['graph_type'] == "line" and param_map.get('stat') is None:
             param_map['stat'] = self.random_player_stat()
@@ -43,7 +39,7 @@ class Randomizer(Preprocessor):
 
         return param_map
 
-    def random_player(self):
+    def random_player_line(self):
         files_folder = "graph_app/files/players"
         player_files = os.listdir(files_folder)
 
@@ -55,6 +51,17 @@ class Randomizer(Preprocessor):
 
         # Return the player name as a string
         return player_name
+
+    def random_player_radar(self, league_df):
+        random_value = league_df['Player'].sample(n=1).values[0]
+        return random_value
+
+    def random_compare_radar(self, league_df, player_pos, player):
+        position_df = league_df[league_df['Position'].str.contains(player_pos)]
+        random_player = player
+        while random_player == player:
+            random_player = position_df['Player'].sample(n=1).values[0]
+        return random_player
 
     def random_player_stat(self):
         stats = ["Minutes played", "Total actions / successful", "Goals", "Assists", "Shots / on target", "xG",
