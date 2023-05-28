@@ -7,56 +7,126 @@ from .preprocessor import Preprocessor
 
 
 class Randomizer(Preprocessor):
+    """
+    Class that handles the generation of random values for any unfilled API request parameters for the random graph
+    endpoint. It uses the local files in the files folder in graph_app for setting random player data.
+    """
+
     def __init__(self):
         self.__cleaner = TextCleaner()
         self.__reader = ExcelReader()
 
     def set_random_parameters(self, param_map):
+        """
+        Function that sets random values for each missing parameter in the parameter map.
+
+        :param param_map: Parameter map containing data passed to the API endpoint.
+        :return: Parameter map with a DataFrame containing league data (league_df), a random player's name (player), a
+        random compare player's name (compare) if a radar graph is requested, a random stat from the player match files
+        (stat) if a line graph is requested, and the player's league (league) set to a default value if not included.
+        """
         if param_map.get('graph_type') == "radar":
-            league_df = self.__reader.all_league_data()
-            league_df = league_df.fillna(0.0)
-            param_map['league_df'] = league_df
-            print("Extracted data into dataframe")
+            param_map = self.extract_league_data(param_map)
 
         if param_map.get('player') is None:
-            if param_map['graph_type'] == "line":
-                param_map['player'] = self.random_player_line()
-            else:
-                league_df = param_map['league_df']
-                random_value = league_df['Player'].sample(n=1).values[0]
-                param_map['player'] = random_value
+            param_map = self.random_player(param_map)
 
         if param_map.get('graph_type') == "radar" and param_map.get('compare') is None:
-            league_df = param_map['league_df']
-            player_pos = self.main_position_league_file(self.__reader.league_data(param_map['player'], league_df))
-            param_map['compare'] = self.random_compare_radar(league_df, player_pos, param_map.get('player'))
+            param_map = self.random_compare(param_map)
 
         if param_map['graph_type'] == "line" and param_map.get('stat') is None:
             param_map['stat'] = self.random_player_stat()
 
         if param_map.get('league') is None:
-            param_map['league'] = "rando2"
+            param_map['league'] = "League"
 
         return param_map
 
+    def extract_league_data(self, param_map):
+        """
+        Function that extracts all league data into a DataFrame, and puts it in the passed parameter map for further
+        use.
+
+        :param param_map: Parameter map containing data passed to the API endpoint.
+        :return: Parameter map updated with a DataFrame containing all data in the league file (league_df).
+        """
+        league_df = self.__reader.all_league_data()
+        league_df = league_df.fillna(0.0)
+        param_map['league_df'] = league_df
+        print("Extracted data into dataframe")
+        return param_map
+
+    def random_player(self, param_map):
+        """
+        Function that chooses a random name from the local player files for line graphs, or a random name from the
+        league dataframe for radar graphs.
+
+        :param param_map: Parameter map containing data passed to the API endpoint and, for radar graphs, the league
+        dataframe (league_df).
+        :return: Parameter map updated with a random player name (player).
+        """
+        if param_map['graph_type'] == "line":
+            param_map['player'] = self.random_player_line()
+
+        else:
+            league_df = param_map['league_df']
+            random_value = league_df['Player'].sample(n=1).values[0]
+            param_map['player'] = random_value
+
+        return param_map
+
+    def random_compare(self, param_map):
+        """
+        Function that finds the position of the main player, and selects a random player from the league dataframe with
+        the same position.
+
+        :param param_map: Parameter map containing data passed to the API endpoint, the league dataframe (league_df),
+        and the main player's name (player).
+        :return: Parameter map updated with a random compare player name (compare).
+        """
+        league_df = param_map['league_df']
+        player = param_map['player']
+        player_row = self.__reader.league_data(param_map['player'], league_df)
+        player_pos = self.main_position_league_file(player_row)
+        param_map['compare'] = self.select_random_compare(league_df, player_pos, player)
+        return param_map
+
     def random_player_line(self):
+        """
+        Function that selects a random name from the local player files for line graphs.
+
+        :return: A player name extracted from the titles of the local player files.
+        """
         files_folder = "graph_app/files/players"
         player_files = os.listdir(files_folder)
 
         random_player_file = random.choice(player_files)
 
-        # Extract the file name
         file_name = os.path.splitext(random_player_file)[0]
         player_name = self.__cleaner.clean_player_name(file_name)
 
-        # Return the player name as a string
         return player_name
 
     def random_player_radar(self, league_df):
+        """
+        Function that selects a random player name from the league dataframe.
+
+        :param league_df: DataFrame containing league data.
+        :return: The name of the player to use for the radar graph.
+        """
         random_value = league_df['Player'].sample(n=1).values[0]
         return random_value
 
-    def random_compare_radar(self, league_df, player_pos, player):
+    def select_random_compare(self, league_df, player_pos, player=None):
+        """
+        Function that selects a random player name to compare to from the league dataframe that matches the
+        passed player position. If passed, the name of the main player is avoided.
+
+        :param league_df: DataFrame containing league data.
+        :param player_pos: The position the returned player should have.
+        :param player: The name of the main player. Will be avoided in selecting the compare name.
+        :return: The name of the player to compare to.
+        """
         position_df = league_df[league_df['Position'].str.contains(player_pos)]
         random_player = player
         while random_player == player:
@@ -64,6 +134,12 @@ class Randomizer(Preprocessor):
         return random_player
 
     def random_player_stat(self):
+        """
+        Function that randomly selects a stat used in the player match files. Currently based on a hardcoded list.
+
+        :return: Randomly selected player file column header as a string.
+        """
+
         stats = ["Minutes played", "Total actions / successful", "Goals", "Assists", "Shots / on target", "xG",
                  "Passes / accurate", "Long passes / accurate", "Crosses / accurate", "Dribbles / successful",
                  "Duels / won", "Aerial duels / won", "Interceptions", "Losses / own half", "Recoveries / opp. half",

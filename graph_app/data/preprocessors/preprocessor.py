@@ -5,10 +5,11 @@ class Preprocessor:
 
     def position_dictionary(self):
         """
-        Creates a collection of all position codes, with their associated general position in full words.
-        Work in progress.
+        Creates a collection of all position codes as found in the league file, with their associated general position
+        in full words.
 
-        :return: Dictionary containing all position abbreviations as keys, and the associated general positions as values.
+        :return: Dictionary containing all position abbreviations as keys, and the associated general positions as
+        values.
         """
 
         pos_dict = dict.fromkeys(['RW', 'RWF', 'LWF', 'LW'], 'Winger')
@@ -24,11 +25,11 @@ class Preprocessor:
 
     def shortened_dictionary(self):
         """
-        Creates a collection of all position codes, with their associated general position as abbreviations.
-        Work in progress.
+        Creates a collection of all position codes as found in the league file, with their associated general position
+        as abbreviations.
 
-        :return: Dictionary containing all position abbreviations as keys, and the associated general position abbreviations
-                 as values.
+        :return: Dictionary containing all position abbreviations as keys, and the associated general position
+        abbreviations as values.
         """
         pos_dict = dict.fromkeys(['RW', 'RWF', 'LWF', 'LW'], 'WI')
         pos_dict.update(dict.fromkeys(['GK'], 'GK'))
@@ -42,11 +43,11 @@ class Preprocessor:
 
     def league_category_dictionary(self):
         """
-        Creates a collection of all positions, along with the league stats that should be graphed in the radio chart for
+        Creates a collection of all positions, along with the league stats that should be graphed in the radar chart for
         each position.
-        Work in progress.
 
-        :return: Dictionary containing all positions as keys, and the associated stats as values.
+        :return: Dictionary containing all shortened positions as keys, and a list containing the associated stats as
+        values.
         """
 
         cat_dict = dict.fromkeys(['GK'], ['Shots blocked per 90', 'Long passes per 90',
@@ -81,7 +82,7 @@ class Preprocessor:
 
     def main_position_league_file(self, player_row):
         """
-        Function that retrieves the main position of a football player.
+        Function that retrieves the main position of a football player from the league file row of the player.
 
         :param player_row: Dataframe containing the league data of a single player.
         :return: The first position in the list of player positions.
@@ -92,10 +93,10 @@ class Preprocessor:
 
     def main_position_player_file(self, player_df):
         """
-        Function that retrieves the main position of a football player.
+        Function that retrieves the main position of a football player from their match data file.
 
-        :param player_row: Dataframe containing the league data of a single player.
-        :return: The first position in the list of player positions.
+        :param player_df: Dataframe containing the match data of a single player.
+        :return: The most frequently occurring position for the player in the match data file.
         """
         positions = []
         for entry in player_df['Position']:
