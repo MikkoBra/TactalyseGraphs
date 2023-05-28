@@ -18,7 +18,7 @@ class TestLineProcessor(unittest.TestCase):
         self.assertEqual(expected, result)
 
     def test_set_player_random(self):
-        with patch.object(self.processor.randomizer, 'random_player', new=self.mock_return_value) as mock_random:
+        with patch.object(self.processor.randomizer, 'random_player_line', new=self.mock_return_value) as mock_random:
             result = self.processor.set_player({}, {})
             mock_random.assert_called_once()
             self.assertTrue("player" in result.keys())

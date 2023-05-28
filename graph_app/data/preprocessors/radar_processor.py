@@ -39,6 +39,8 @@ class RadarProcessor(Preprocessor):
         value within the league for each of these columns in a list (scales).
         """
         radar_map = {'type': "radar"}
+        if param_map.get('league_df') is None:
+            param_map = self.extract_league_data(param_map)
         league_df = param_map.get('league_df')
 
         radar_map = self.set_player(param_map, league_df, radar_map)

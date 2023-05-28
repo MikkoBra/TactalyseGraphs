@@ -165,4 +165,18 @@ class LineProcessor(Preprocessor):
 
     @property
     def randomizer(self):
+        """
+        Getter for the randomizer attribute of the LineProcessor.
+
+        :return: Randomizer object representing the LineProcessor's random value generator.
+        """
         return self.__randomizer
+
+    @property
+    def reader(self):
+        """
+        Getter for the reader attribute of the LineProcessor.
+
+        :return: ExcelReader object representing the LineProcessor's Excel file and DataFrame reader.
+        """
+        return self._reader
