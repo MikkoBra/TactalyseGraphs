@@ -16,10 +16,12 @@ class RadarChart(Graph):
     __title = "#D46508"
     __subtitle = "#5E5E5E"
     __left_pos = 0.19
-    __bottom_pos = 0.18
+    __bottom_pos = 0.1
     __plot_w = 0.6
-    __plot_h = 0.6
+    __plot_h = 0.62
     __num_labels = 6.0
+    __title_offset = 1.33
+    __subtitle_offset = 0.92
 
     def __init__(self, param_map):
         player_pos = param_map.get('player_pos')
@@ -51,7 +53,7 @@ class RadarChart(Graph):
         angles += angles[:1]  # Close the loop
 
         # create the radar chart
-        fig = plt.figure(figsize=(8, 8))
+        fig = plt.figure(figsize=(8, 7))
         ax = fig.add_axes([self.__left_pos, self.__bottom_pos, self.__plot_w, self.__plot_h], projection='polar')
 
         p1_data_normalized = [d / scale for d, scale in zip(p1_values, scales)]
@@ -115,7 +117,6 @@ class RadarChart(Graph):
         ax.set_yticklabels([])
 
         # Code for showing scales
-        origin_placed = False
         for i, label in enumerate(scale_labels):
             angle = angles[i]
             radius = max(player_vals) * 1.1  # Adjust the radius for placing the labels
@@ -144,13 +145,13 @@ class RadarChart(Graph):
         subtitle += "Matches played: " + str(matches) + "\n"
         if p2 is not None:
             subtitle += "Compared with " + p2 + "\n"
-        plt.suptitle(subtitle, fontsize=12, y=0.95, color=self.__subtitle)
-        ax.set_title(title, fontsize=15, fontweight=0, color=self.__tactalyse, weight="bold", y=1.28)
+        plt.suptitle(subtitle, fontsize=12, y=self.__subtitle_offset, color=self.__subtitle)
+        ax.set_title(title, fontsize=15, fontweight=0, color=self.__tactalyse, weight="bold", y=self.__title_offset)
 
-        path = "graph_app/files/images/Logo_Tactalyse_Stats.png"
+        path = "graph_app/files/images/Logo_Tactalyse_Triangle.png"
         arr_img = plt.imread(path)
-        im = OffsetImage(arr_img, zoom=0.03)
-        ab = AnnotationBbox(im, (0.5, -0.2), xycoords='axes fraction', frameon=False)
+        im = OffsetImage(arr_img, zoom=0.5)
+        ab = AnnotationBbox(im, (1.23, 1.3), xycoords='axes fraction', frameon=False)
         ax.add_artist(ab)
 
         return ax

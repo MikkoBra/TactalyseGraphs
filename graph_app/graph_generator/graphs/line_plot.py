@@ -13,18 +13,18 @@ class LinePlot(Graph):
     __position = ''
     __tactalyse = "#EC4A24"
     __black = "#242424"
-    __player_color = '#EC4A24'
-    __player_sub_color = '#5e1d0e'
+    __player_color = '#f45600'
+    __player_sub_color = '#f0a780'
     __compare_color = '#4a24ec'
-    __compare_sub_color = '#1d0e5e'
+    __compare_sub_color = '#bbafec'
     __title = "#D46508"
     __subtitle = "#5E5E5E"
-    __bottom_offset = 0.2
-    __top_offset = 0.85
-    __right_offset = 0.9
+    __bottom_offset = 0.1
+    __top_offset = 0.8
+    __right_offset = 0.95
     __left_offset = 0.1
-    __subtitle_offset = 0.92
-    __title_offset = 1.11
+    __subtitle_offset = 0.895
+    __title_offset = 1.15
 
     def __init__(self, param_map):
         player_pos = param_map.get('player_pos')
@@ -89,9 +89,9 @@ class LinePlot(Graph):
         no_label = False
         for year in year_x_values:
             if no_label:
-                ax.axvline(x=year, linestyle="dashed", color='#B5B3FF')
+                ax.axvline(x=year, linestyle="dashed", color='#5fe14a')
             else:
-                ax.axvline(x=year, linestyle="dashed", color='#B5B3FF', label="Year")
+                ax.axvline(x=year, linestyle="dashed", color='#5fe14a', label="Year")
                 no_label = True
         return ax
 
@@ -125,10 +125,10 @@ class LinePlot(Graph):
         plt.suptitle(subtitle, fontsize=12, y=self.__subtitle_offset, color=self.__subtitle)
         ax.set_title(title, fontsize=15, fontweight=0, color=self.__title, weight="bold", y=self.__title_offset)
 
-        path = "graph_app/files/images/Logo_Tactalyse_Stats.png"
+        path = "graph_app/files/images/Logo_Tactalyse_Triangle.png"
         arr_img = plt.imread(path)
-        im = OffsetImage(arr_img, zoom=0.03)
-        ab = AnnotationBbox(im, (0.5, -0.2), xycoords='axes fraction', frameon=False)
+        im = OffsetImage(arr_img, zoom=0.5)
+        ab = AnnotationBbox(im, (0.95, 1.15), xycoords='axes fraction', frameon=False)
         ax.add_artist(ab)
 
         return ax
@@ -145,7 +145,6 @@ class LinePlot(Graph):
         fig, ax = plt.subplots(figsize=(8, 6), gridspec_kw={'top': self.__top_offset, 'bottom': self.__bottom_offset,
                                                             'left': self.__left_offset, 'right': self.__right_offset})
         ax.clear()
-        fig.set_facecolor('#EDEDED')
 
         player_x_values, year_x_values, years = self.get_xlabels(player_data)
         subcolumns = column_name.split("/")

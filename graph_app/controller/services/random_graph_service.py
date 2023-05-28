@@ -85,7 +85,18 @@ class RandomGraphService(Service):
 
         graph = self.__graph_connector.get_data(data_map)
 
-        return Response(graph, mimetype='image/png')
+        response = self.create_response(data_map, graph)
+
+        return response
+
+    def create_response(self, data_map, graph):
+        response = Response(graph, mimetype='image/png')
+        player = data_map['player']
+        compare = data_map.get('compare')
+        response.headers['player'] = player
+        if compare is not None:
+            response.headers['compare'] = compare
+        return response
 
     @property
     def data_connector(self):
