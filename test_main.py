@@ -49,7 +49,7 @@ def test_radar():
 
 def test_random():
     param_map = {"type": "random",
-                 "graph_type": "radar"}
+                 "graph_type": "line"}
 
     data_connector = DataConnector()
     data_map = data_connector.get_data(param_map)
@@ -61,5 +61,5 @@ def test_random():
 
 if __name__ == "__main__":
     test_line()
-    test_radar()
+    # test_radar()
     test_random()

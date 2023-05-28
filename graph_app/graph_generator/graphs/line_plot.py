@@ -13,6 +13,7 @@ class LinePlot(Graph):
     __position = ''
     __tactalyse = "#EC4A24"
     __black = "#242424"
+    __season_color = "#00a70b"
     __player_color = '#f45600'
     __player_sub_color = '#f0a780'
     __compare_color = '#4a24ec'
@@ -48,15 +49,23 @@ class LinePlot(Graph):
         dates = dates.sort_values().reset_index(drop=True)
         scaled_x_values = self.scaled_date_values(dates)
 
-        # Get the indices where the year changes
-        year_indices = np.where(dates.dt.year.diff() != 0)[0]
+        year = dates.dt.year
+        month = dates.dt.month
+
+        year_indices = []
+        for y in year.unique():
+            year_dates = dates[year == y]
+            first_of_july = year_dates[(month >= 7) & (year_dates.dt.day > 1)].index.min()
+            if pd.notnull(first_of_july):
+                year_indices.append(first_of_july)
         year_x_values = []
         for i in year_indices:
             year_x_values.append(scaled_x_values[i])
         date_strings = dates.iloc[year_indices].dt.strftime('%Y-%m-%d')
         years = date_strings.str.slice(start=2, stop=4)
+        seasons = [f"{n}/{int(n)+1}" for n in years]
 
-        return scaled_x_values, year_x_values, years
+        return scaled_x_values, year_x_values, seasons
 
     def average_entries(self, x_vals, y_vals, window=5):
         avg_x = x_vals.rolling(window=window).mean()
@@ -89,9 +98,9 @@ class LinePlot(Graph):
         no_label = False
         for year in year_x_values:
             if no_label:
-                ax.axvline(x=year, linestyle="dashed", color='#5fe14a')
+                ax.axvline(x=year, linestyle="dashed", color=self.__season_color)
             else:
-                ax.axvline(x=year, linestyle="dashed", color='#5fe14a', label="Year")
+                ax.axvline(x=year, linestyle="dashed", color=self.__season_color, label="Season")
                 no_label = True
         return ax
 
