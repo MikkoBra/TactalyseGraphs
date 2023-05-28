@@ -10,9 +10,9 @@ class LineProcessor(Preprocessor):
     module.
     """
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super(LineProcessor, self).__init__(*args, **kwargs)
         self.__randomizer = Randomizer()
-        self.__reader = ExcelReader()
 
     def get_columns_line_plots(self, player_pos):
         """
@@ -169,4 +169,4 @@ class LineProcessor(Preprocessor):
 
     @property
     def reader(self):
-        return self.__reader
+        return self._reader

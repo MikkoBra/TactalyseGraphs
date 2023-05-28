@@ -1,7 +1,11 @@
 from collections import Counter
+from graph_app.data.excel_reader import ExcelReader
 
 
 class Preprocessor:
+
+    def __init__(self, *args, **kwargs):
+        self._reader = ExcelReader()
 
     def position_dictionary(self):
         """
@@ -90,6 +94,21 @@ class Preprocessor:
         player_positions = player_row['Position'].iloc[0]
         first_position = player_positions.split(', ')[0]
         return first_position
+
+
+    def extract_league_data(self, param_map):
+        """
+        Function that extracts all league data into a DataFrame, and puts it in the passed parameter map for further
+        use.
+
+        :param param_map: Parameter map containing data passed to the API endpoint.
+        :return: Parameter map updated with a DataFrame containing all data in the league file (league_df).
+        """
+        league_df = self.__reader.all_league_data()
+        league_df = league_df.fillna(0.0)
+        param_map['league_df'] = league_df
+        print("Extracted data into dataframe")
+        return param_map
 
     def main_position_player_file(self, player_df):
         """

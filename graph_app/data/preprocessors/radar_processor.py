@@ -1,6 +1,5 @@
 from .preprocessor import Preprocessor
 from .randomizer import Randomizer
-from ..excel_reader import ExcelReader
 
 
 class RadarProcessor(Preprocessor):
@@ -10,9 +9,9 @@ class RadarProcessor(Preprocessor):
     module.
     """
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super(RadarProcessor, self).__init__(*args, **kwargs)
         self.__randomizer = Randomizer()
-        self.__reader = ExcelReader()
 
     def get_columns_radar_chart(self, position):
         """
@@ -41,11 +40,6 @@ class RadarProcessor(Preprocessor):
         """
         radar_map = {'type': "radar"}
         league_df = param_map.get('league_df')
-        if league_df is None:
-            league_df = self.__reader.all_league_data()
-            league_df = league_df.fillna(0.0)
-            param_map['league_df'] = league_df
-            print("Extracted data into dataframe")
 
         radar_map = self.set_player(param_map, league_df, radar_map)
         radar_map = self.set_player_data(league_df, radar_map)
@@ -82,7 +76,7 @@ class RadarProcessor(Preprocessor):
         (player_pos), and the abbreviation of the general position (player_pos_short).
         """
         player = radar_map.get('player')
-        player_row = self.__reader.league_data(player, league_df)
+        player_row = self._reader.league_data(player, league_df)
         radar_map.update({'player_row': player_row})
         return radar_map
 
@@ -122,7 +116,7 @@ class RadarProcessor(Preprocessor):
         compare = param_map.get('compare')
         radar_map.update({'compare': compare})
 
-        compare_df = self.__reader.league_data(compare, league_df)
+        compare_df = self._reader.league_data(compare, league_df)
         radar_map.update({'compare_row': compare_df})
         return radar_map
 
@@ -171,4 +165,4 @@ class RadarProcessor(Preprocessor):
 
         :return: ExcelReader object representing the RadarProcessor's Excel file and DataFrame reader.
         """
-        return self.__reader
+        return self._reader

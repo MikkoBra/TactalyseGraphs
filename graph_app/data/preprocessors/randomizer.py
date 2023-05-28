@@ -12,9 +12,9 @@ class Randomizer(Preprocessor):
     endpoint. It uses the local files in the files folder in graph_app for setting random player data.
     """
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super(Randomizer, self).__init__(*args, **kwargs)
         self.__cleaner = TextCleaner()
-        self.__reader = ExcelReader()
 
     def set_random_parameters(self, param_map):
         """
@@ -40,20 +40,6 @@ class Randomizer(Preprocessor):
         if param_map.get('league') is None:
             param_map['league'] = "League"
 
-        return param_map
-
-    def extract_league_data(self, param_map):
-        """
-        Function that extracts all league data into a DataFrame, and puts it in the passed parameter map for further
-        use.
-
-        :param param_map: Parameter map containing data passed to the API endpoint.
-        :return: Parameter map updated with a DataFrame containing all data in the league file (league_df).
-        """
-        league_df = self.__reader.all_league_data()
-        league_df = league_df.fillna(0.0)
-        param_map['league_df'] = league_df
-        print("Extracted data into dataframe")
         return param_map
 
     def random_player(self, param_map):
@@ -86,7 +72,7 @@ class Randomizer(Preprocessor):
         """
         league_df = param_map['league_df']
         player = param_map['player']
-        player_row = self.__reader.league_data(param_map['player'], league_df)
+        player_row = self._reader.league_data(param_map['player'], league_df)
         player_pos = self.main_position_league_file(player_row)
         param_map['compare'] = self.select_random_compare(league_df, player_pos, player)
         return param_map
@@ -151,3 +137,23 @@ class Randomizer(Preprocessor):
                  "Back passes / accurate", "Conceded goals", "xCG", "Shots against", "Saves / with reflexes", "Exits",
                  "Passes to GK / accurate", "Goal kicks", "Short goal kicks", "Long goal kicks"]
         return random.choice(stats)
+
+
+    @property
+    def reader(self):
+        """
+        Getter for the reader attribute of the Randomizer.
+
+        :return: ExcelReader object representing the Randomizer's Excel file and DataFrame reader.
+        """
+        return self._reader
+
+
+    @property
+    def cleaner(self):
+        """
+        Getter for the cleaner attribute of the Randomizer.
+
+        :return: TextCleaner object representing the Randomizer's text cleaner.
+        """
+        return self.__cleaner

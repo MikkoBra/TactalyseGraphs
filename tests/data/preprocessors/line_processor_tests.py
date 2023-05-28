@@ -100,6 +100,14 @@ class TestLineProcessor(unittest.TestCase):
             expected = {'key': 'value', 'columns': ['mock']}
             self.assertEqual(expected, result)
 
+    def test_extract_radar_data(self):
+        mock_player = MagicMock(return_value="player added")
+        mock_data = MagicMock(return_value="data added")
+        mock_pos = MagicMock(return_value="positions added")
+        mock_compare = MagicMock(return_value="compare added")
+        mock_stats = MagicMock(return_value="stats added")
+        mock_scales = MagicMock(return_value="scales added")
+
 
 if __name__ == "__main__":
     unittest.main()
