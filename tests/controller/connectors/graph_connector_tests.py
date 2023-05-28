@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import patch, MagicMock, Mock
+
 from graph_app.controller.connectors.graph_connector import GraphConnector
 
 

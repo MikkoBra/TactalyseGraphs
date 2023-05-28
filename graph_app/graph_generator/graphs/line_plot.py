@@ -1,10 +1,10 @@
 import io
 
 import matplotlib.pyplot as plt
-from matplotlib.offsetbox import AnnotationBbox, OffsetImage
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from matplotlib.offsetbox import AnnotationBbox, OffsetImage
 
 from .abstract_models import Graph
 
@@ -42,7 +42,6 @@ class LinePlot(Graph):
         # Calculate scaled x-values based on time differences
         scaled_date_values = np.cumsum(time_diff)  # Cumulative sum of time differences
         return scaled_date_values
-
 
     def get_xlabels(self, data):
         dates = pd.to_datetime(data["Date"], format='%Y-%m-%d')

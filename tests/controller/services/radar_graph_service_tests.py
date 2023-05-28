@@ -1,7 +1,9 @@
 import unittest
 from unittest.mock import patch, MagicMock
-from graph_app.controller.services.radar_graph_service import RadarGraphService
+
 from flask import Response
+
+from graph_app.controller.services.radar_graph_service import RadarGraphService
 
 
 class TestRadarGraphService(unittest.TestCase):
@@ -32,7 +34,7 @@ class TestRadarGraphService(unittest.TestCase):
 
     def test_pass_data(self):
         with patch.object(self.service.data_connector, 'get_data', new=self.mock_return_value) as mock_data_get_data:
-            with patch.object(self.service.graph_connector, 'get_data', new=self.mock_return_value_2)\
+            with patch.object(self.service.graph_connector, 'get_data', new=self.mock_return_value_2) \
                     as mock_graph_get_data:
                 response = self.service.pass_data(self.data_map)
                 mock_data_get_data.assert_called_once_with(self.data_map)

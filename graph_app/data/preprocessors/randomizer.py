@@ -1,9 +1,8 @@
 import os
 import random
 
-from ..text_cleaner import TextCleaner
-from graph_app.data.excel_reader import ExcelReader
 from .preprocessor import Preprocessor
+from ..text_cleaner import TextCleaner
 
 
 class Randomizer(Preprocessor):
@@ -138,7 +137,6 @@ class Randomizer(Preprocessor):
                  "Passes to GK / accurate", "Goal kicks", "Short goal kicks", "Long goal kicks"]
         return random.choice(stats)
 
-
     @property
     def reader(self):
         """
@@ -147,7 +145,6 @@ class Randomizer(Preprocessor):
         :return: ExcelReader object representing the Randomizer's Excel file and DataFrame reader.
         """
         return self._reader
-
 
     @property
     def cleaner(self):

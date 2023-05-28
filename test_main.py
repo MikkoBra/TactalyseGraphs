@@ -1,7 +1,10 @@
+import io
+
+from PIL import Image
+
 from graph_app.controller.connectors.data_connector import DataConnector
 from graph_app.controller.connectors.graph_connector import GraphConnector
-import io
-from PIL import Image
+
 
 def show_plot(bytes):
     stream = io.BytesIO(bytes)

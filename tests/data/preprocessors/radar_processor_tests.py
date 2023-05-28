@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import patch, MagicMock
+
 from graph_app.data.preprocessors.radar_processor import RadarProcessor
 
 
@@ -12,7 +13,8 @@ class TestRadarProcessor(unittest.TestCase):
         self.mock_league_df = MagicMock(return_value={"player": "stat"})
 
     def test_get_columns_radar_chart(self):
-        with patch.object(self.processor, 'league_category_dictionary', return_value={"position": "columns"}) as mock_columns:
+        with patch.object(self.processor, 'league_category_dictionary',
+                          return_value={"position": "columns"}) as mock_columns:
             result = self.processor.get_columns_radar_chart("position")
             mock_columns.assert_called_once()
             self.assertEqual("columns", result)
@@ -43,7 +45,8 @@ class TestRadarProcessor(unittest.TestCase):
         params = {'player_row': 'row'}
         with patch.object(self.processor, 'main_position_league_file', return_value='pos_f') as mock_file_pos:
             with patch.object(self.processor, 'position_dictionary', return_value={'pos_f': 'pos_l'}) as mock_long_pos:
-                with patch.object(self.processor, 'shortened_dictionary', return_value={'pos_f': 'pos_s'}) as mock_short_pos:
+                with patch.object(self.processor, 'shortened_dictionary',
+                                  return_value={'pos_f': 'pos_s'}) as mock_short_pos:
                     result = self.processor.set_player_positions(params)
                     expected = {'player_row': 'row',
                                 'main_pos': 'pos_f',
@@ -82,6 +85,32 @@ class TestRadarProcessor(unittest.TestCase):
         result = self.processor.set_max_vals(self.mock_league_df, params)
         expected = {"columns": "stats", "scales": "max vals list"}
         self.assertEqual(expected, result)
+
+    def test_extract_radar_data(self):
+        radar_map = {'type': "radar"}
+        params = {'league_df': self.mock_league_df}
+        mock_player = MagicMock(return_value="player added")
+        mock_data = MagicMock(return_value="data added")
+        mock_pos = MagicMock(return_value="positions added")
+        mock_compare = MagicMock(return_value="compare added")
+        mock_stats = MagicMock(return_value="stats added")
+        mock_scales = MagicMock(return_value="scales added")
+
+        with patch.object(self.processor, 'set_player', new=mock_player) as set_player:
+            with patch.object(self.processor, 'set_compare', new=mock_compare) as set_compare:
+                with patch.object(self.processor, 'set_player_positions', new=mock_pos) as set_positions:
+                    with patch.object(self.processor, 'set_player_data', new=mock_data) as set_data:
+                        with patch.object(self.processor, 'set_max_vals', new=mock_scales) as set_scales:
+                            with patch.object(self.processor, 'set_stats', new=mock_stats) as set_stats:
+                                result = self.processor.extract_radar_data(params)
+                                set_player.assert_called_once_with(params, self.mock_league_df, radar_map)
+                                set_data.assert_called_once_with(self.mock_league_df, "player added")
+                                set_positions.assert_called_once_with("data added")
+                                set_compare.assert_called_once_with(params, self.mock_league_df, "positions added")
+                                set_stats.assert_called_once_with("compare added")
+                                set_scales.assert_called_once_with(self.mock_league_df, "stats added")
+                                expected = "scales added"
+                                self.assertEqual(expected, result)
 
 
 if __name__ == "__main__":

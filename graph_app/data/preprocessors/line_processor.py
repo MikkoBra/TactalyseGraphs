@@ -84,7 +84,7 @@ class LineProcessor(Preprocessor):
         compare = param_map.get('compare')
         line_map.update({'compare': compare})
 
-        compare_df = self.__reader.player_data(compare)
+        compare_df = self._reader.player_data(compare)
         line_map.update({'compare_data': compare_df})
         return line_map
 
@@ -117,7 +117,7 @@ class LineProcessor(Preprocessor):
         abbreviation of the general position (main_pos_short).
         """
         player = line_map.get('player')
-        player_df = self.__reader.player_data(player)
+        player_df = self._reader.player_data(player)
         line_map.update({'player_data': player_df})
 
         main_pos = self.main_position_player_file(player_df)
@@ -166,7 +166,3 @@ class LineProcessor(Preprocessor):
     @property
     def randomizer(self):
         return self.__randomizer
-
-    @property
-    def reader(self):
-        return self._reader

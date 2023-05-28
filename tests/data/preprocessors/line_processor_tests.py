@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import patch, MagicMock
+
 from graph_app.data.preprocessors.line_processor import LineProcessor
 
 
@@ -57,11 +58,11 @@ class TestLineProcessor(unittest.TestCase):
         mock_pos = MagicMock(return_value={"pos_f": "pos_l"})
         mock_short_pos = MagicMock(return_value={"pos_f": "pos_s"})
         with patch.object(self.processor.reader, 'player_data', new=self.mock_return_value) as mock_read:
-            with patch.object(self.processor, 'main_position_player_file', new=mock_file_pos)\
+            with patch.object(self.processor, 'main_position_player_file', new=mock_file_pos) \
                     as mock_get_file_pos:
-                with patch.object(self.processor, 'position_dictionary', new=mock_pos)\
+                with patch.object(self.processor, 'position_dictionary', new=mock_pos) \
                         as mock_get_long_pos:
-                    with patch.object(self.processor, 'shortened_dictionary', new=mock_short_pos)\
+                    with patch.object(self.processor, 'shortened_dictionary', new=mock_short_pos) \
                             as mock_get_short_pos:
                         result = self.processor.set_player_data(params)
                         expected = {"player": "name", "main_pos": "pos_f", "player_pos": "pos_l",
@@ -100,13 +101,29 @@ class TestLineProcessor(unittest.TestCase):
             expected = {'key': 'value', 'columns': ['mock']}
             self.assertEqual(expected, result)
 
-    def test_extract_radar_data(self):
+    def test_extract_line_data(self):
+        line_map = {'type': "line"}
         mock_player = MagicMock(return_value="player added")
-        mock_data = MagicMock(return_value="data added")
-        mock_pos = MagicMock(return_value="positions added")
         mock_compare = MagicMock(return_value="compare added")
+        mock_league = MagicMock(return_value="league added")
+        mock_data = MagicMock(return_value="data added")
+        mock_dates = MagicMock(return_value="dates added")
         mock_stats = MagicMock(return_value="stats added")
-        mock_scales = MagicMock(return_value="scales added")
+        with patch.object(self.processor, 'set_player', new=mock_player) as set_player:
+            with patch.object(self.processor, 'set_compare', new=mock_compare) as set_compare:
+                with patch.object(self.processor, 'set_league', new=mock_league) as set_league:
+                    with patch.object(self.processor, 'set_player_data', new=mock_data) as set_data:
+                        with patch.object(self.processor, 'set_tactalyse_data', new=mock_dates) as set_dates:
+                            with patch.object(self.processor, 'set_stats', new=mock_stats) as set_stats:
+                                result = self.processor.extract_line_data({})
+                                set_player.assert_called_once_with({}, line_map)
+                                set_compare.assert_called_once_with({}, "player added")
+                                set_league.assert_called_once_with({}, "compare added")
+                                set_data.assert_called_once_with("league added")
+                                set_dates.assert_called_once_with({}, "data added")
+                                set_stats.assert_called_once_with({}, "dates added")
+                                expected = "stats added"
+                                self.assertEqual(expected, result)
 
 
 if __name__ == "__main__":

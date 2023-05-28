@@ -1,8 +1,8 @@
 import io
 
 import matplotlib.pyplot as plt
-from matplotlib.offsetbox import AnnotationBbox, OffsetImage
 import numpy as np
+from matplotlib.offsetbox import AnnotationBbox, OffsetImage
 
 from .abstract_models import Graph
 
@@ -46,7 +46,7 @@ class RadarChart(Graph):
 
     def create_radar_chart(self, p1_values, p2_values, scales):
         # calculate the angles for each category
-        n = len(p1_values)-1
+        n = len(p1_values) - 1
         angles = np.linspace(0, 2 * np.pi, n, endpoint=False).tolist()
         angles += angles[:1]  # Close the loop
 
@@ -103,9 +103,9 @@ class RadarChart(Graph):
             vertical = np.pi
             if angle < abs(np.pi - angle):
                 vertical = 0.0
-            elif abs(2*np.pi - angle) < abs(angle - np.pi):
+            elif abs(2 * np.pi - angle) < abs(angle - np.pi):
                 vertical = 2 * np.pi
-            offset = 0.2 * (0 + (abs(angle - vertical) / (np.pi/2))) + 0.03
+            offset = 0.2 * (0 + (abs(angle - vertical) / (np.pi / 2))) + 0.03
             lab = ax.text(x, y - offset, column_name, transform=label.get_transform(),
                           ha=label.get_ha(), va=label.get_va())
         return ax

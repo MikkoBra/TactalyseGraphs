@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import patch, MagicMock
+
 from graph_app.controller.connectors.data_connector import DataConnector
 from graph_app.data.preprocessors.randomizer import Randomizer
 
@@ -47,13 +48,12 @@ class TestDataConnector(unittest.TestCase):
                 mock_random_choice.assert_called_once_with(self.random_map)
 
     def test_set_random_data_calls_set_random_parameters(self):
-
         params = self.random_map
         mock_choice = params
         mock_choice['graph_type'] = 'line'
 
         with patch.object(self.connector, "random_graph_choice", return_value=mock_choice):
-            with patch.object(self.connector.randomizer, "set_random_parameters", new=self.mock_return_value)\
+            with patch.object(self.connector.randomizer, "set_random_parameters", new=self.mock_return_value) \
                     as randomizer_instance_mock:
                 result = self.connector.set_random_data(params)
                 randomizer_instance_mock.assert_called_once_with(mock_choice)
@@ -91,7 +91,7 @@ class TestDataConnector(unittest.TestCase):
 
     def test_get_radar_data(self):
         params = self.radar_map
-        with patch.object(self.connector.radar_processor, "extract_radar_data", new=self.mock_return_value)\
+        with patch.object(self.connector.radar_processor, "extract_radar_data", new=self.mock_return_value) \
                 as processor_instance_mock:
             result = self.connector.get_radar_data(params)
             processor_instance_mock.assert_called_once_with(params)
@@ -99,7 +99,7 @@ class TestDataConnector(unittest.TestCase):
 
     def test_get_line_data(self):
         params = self.line_map
-        with patch.object(self.connector.line_processor, "extract_line_data", new=self.mock_return_value)\
+        with patch.object(self.connector.line_processor, "extract_line_data", new=self.mock_return_value) \
                 as processor_instance_mock:
             result = self.connector.get_line_data(params)
             processor_instance_mock.assert_called_once_with(params)

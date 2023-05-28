@@ -1,7 +1,9 @@
 import unittest
 from unittest.mock import patch, MagicMock
-from graph_app.controller.services.random_graph_service import RandomGraphService
+
 from flask import Response
+
+from graph_app.controller.services.random_graph_service import RandomGraphService
 
 
 class TestRandomGraphService(unittest.TestCase):
