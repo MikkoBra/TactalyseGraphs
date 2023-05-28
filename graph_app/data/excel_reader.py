@@ -52,7 +52,7 @@ class ExcelReader:
         try:
             player = league_df.loc[league_df['Player'] == player]
         except KeyError:
-            player = pd.DataFrame()
+            raise KeyError("Player did not exist in the league file.")
         return player
 
     def all_league_data(self):

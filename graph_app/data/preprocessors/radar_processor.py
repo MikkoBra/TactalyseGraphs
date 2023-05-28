@@ -1,7 +1,6 @@
 from .preprocessor import Preprocessor
 from .randomizer import Randomizer
 from ..excel_reader import ExcelReader
-import pandas as pd
 
 
 class RadarProcessor(Preprocessor):
@@ -50,6 +49,7 @@ class RadarProcessor(Preprocessor):
 
         radar_map = self.set_player(param_map, league_df, radar_map)
         radar_map = self.set_player_data(league_df, radar_map)
+        radar_map = self.set_player_positions(radar_map)
         radar_map = self.set_compare(param_map, league_df, radar_map)
         radar_map = self.set_stats(radar_map)
         radar_map = self.set_max_vals(league_df, radar_map)
@@ -73,8 +73,7 @@ class RadarProcessor(Preprocessor):
 
     def set_player_data(self, league_df, radar_map):
         """
-        Function that sets the player's league data in the radar graph parameter map, along with their position in
-        different formats.
+        Function that sets the player's league data in the radar graph parameter map.
 
         :param league_df: DataFrame containing data for all players in the passed player's league.
         :param radar_map: Parameter map to be used by the radar graph module.
@@ -84,10 +83,19 @@ class RadarProcessor(Preprocessor):
         """
         player = radar_map.get('player')
         player_row = self.__reader.league_data(player, league_df)
-        if isinstance(player_row, pd.DataFrame) and player_row.empty:
-            raise KeyError("Player did not exist in the league file.")
         radar_map.update({'player_row': player_row})
+        return radar_map
 
+    def set_player_positions(self, radar_map):
+        """
+        Function that sets the player's position in the radar graph parameter map in different formats
+
+        :param radar_map: Parameter map to be used by the radar graph module.
+        :return: Radar graph parameter map updated with the player's position as stated in the league data file
+        (main_pos), the corresponding general position name (player_pos), and the abbreviation of the general position
+        (player_pos_short).
+        """
+        player_row = radar_map.get('player_row')
         main_pos = self.main_position_league_file(player_row)
         radar_map.update({'main_pos': main_pos})
         main_pos_long = self.position_dictionary().get(main_pos)
@@ -115,8 +123,6 @@ class RadarProcessor(Preprocessor):
         radar_map.update({'compare': compare})
 
         compare_df = self.__reader.league_data(compare, league_df)
-        if isinstance(compare_df, pd.DataFrame) and compare_df.empty:
-            raise KeyError("Comparison player did not exist in the league file.")
         radar_map.update({'compare_row': compare_df})
         return radar_map
 

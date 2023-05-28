@@ -33,22 +33,56 @@ class TestRadarProcessor(unittest.TestCase):
 
     def test_set_player_data(self):
         params = {"player": "name"}
-        mock_player_row = MagicMock(return_value={"player": "stat"})
-        mock_file_pos = MagicMock(return_value="pos_f")
-        mock_pos = MagicMock(return_value={"pos_f": "pos_l"})
-        mock_short_pos = MagicMock(return_value={"pos_f": "pos_s"})
-        with patch.object(self.processor.reader, 'league_data', new=mock_player_row) as mock_read:
-            with patch.object(self.processor, 'main_position_league_file', new=mock_file_pos) \
-                    as mock_get_file_pos:
-                with patch.object(self.processor, 'position_dictionary', new=mock_pos) \
-                        as mock_get_long_pos:
-                    with patch.object(self.processor, 'shortened_dictionary', new=mock_short_pos) \
-                            as mock_get_short_pos:
-                        result = self.processor.set_player_data(self.mock_league_df, params)
-                        expected = {"player": "name", "main_pos": "pos_f", "player_pos": "pos_l",
-                                    "player_pos_short": "pos_s", "player_row": {"player": "stat"}}
-                        mock_read.assert_called_once_with("name", self.mock_league_df)
-                        mock_get_file_pos.assert_called_once_with("mock")
-                        mock_get_long_pos.assert_called_once()
-                        mock_get_short_pos.assert_called_once()
-                        self.assertEqual(expected, result)
+        with patch.object(self.processor.reader, 'league_data', new=self.mock_return_value) as mock_read:
+            result = self.processor.set_player_data(self.mock_league_df, params)
+            mock_read.assert_called_once_with("name", self.mock_league_df)
+            expected = {"player": "name", "player_row": "mock"}
+            self.assertEqual(expected, result)
+
+    def test_set_player_positions(self):
+        params = {'player_row': 'row'}
+        with patch.object(self.processor, 'main_position_league_file', return_value='pos_f') as mock_file_pos:
+            with patch.object(self.processor, 'position_dictionary', return_value={'pos_f': 'pos_l'}) as mock_long_pos:
+                with patch.object(self.processor, 'shortened_dictionary', return_value={'pos_f': 'pos_s'}) as mock_short_pos:
+                    result = self.processor.set_player_positions(params)
+                    expected = {'player_row': 'row',
+                                'main_pos': 'pos_f',
+                                'player_pos': 'pos_l',
+                                'player_pos_short': 'pos_s'}
+                    mock_file_pos.assert_called_once_with('row')
+                    mock_long_pos.assert_called_once()
+                    mock_short_pos.assert_called_once()
+                    self.assertEqual(expected, result)
+
+    def test_set_compare_empty(self):
+        result = self.processor.set_compare({}, self.mock_league_df, self.radar_map)
+        self.assertEqual(self.radar_map, result)
+
+    def test_set_compare(self):
+        params = {"compare": "name"}
+        with patch.object(self.processor.reader, 'league_data', new=self.mock_return_value) as mock_read:
+            result = self.processor.set_compare(params, self.mock_league_df, self.radar_map)
+            mock_read.assert_called_once_with("name", self.mock_league_df)
+            expected = {"key": "value", "compare": "name", "compare_row": "mock"}
+            self.assertEqual(expected, result)
+
+    def test_set_stats(self):
+        params = {"player_pos_short": "pos"}
+        with patch.object(self.processor, 'get_columns_radar_chart', new=self.mock_return_value) as mock_columns:
+            result = self.processor.set_stats(params)
+            expected = {"player_pos_short": "pos", "columns": "mock"}
+            mock_columns.assert_called_once_with("pos")
+            self.assertEqual(expected, result)
+
+    def test_set_max_vals(self):
+        params = {"columns": "stats"}
+        max_vals_df = MagicMock(return_value="max")
+        self.mock_league_df.__getitem__().max.return_value = max_vals_df
+        max_vals_df.tolist.return_value = "max vals list"
+        result = self.processor.set_max_vals(self.mock_league_df, params)
+        expected = {"columns": "stats", "scales": "max vals list"}
+        self.assertEqual(expected, result)
+
+
+if __name__ == "__main__":
+    unittest.main()
