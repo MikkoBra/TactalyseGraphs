@@ -55,7 +55,7 @@ class Randomizer(Preprocessor):
 
         else:
             league_df = param_map['league_df']
-            random_value = league_df['Player'].sample(n=1).values[0]
+            random_value = self.random_player_radar(league_df)
             param_map['player'] = random_value
 
         return param_map
