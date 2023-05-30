@@ -56,6 +56,11 @@ class ExcelReader:
         return player
 
     def all_league_data(self):
+        """
+        Function for extracting all data from a league file into a dataframe.
+
+        :return: Dataframe containing data for all players in a specified football league file.
+        """
         files_folder = os.path.join(self.__source_folder, 'graph_app', 'files', 'leagues')
         for dirpath, dirnames, filenames in os.walk(files_folder):
             for filename in filenames:
