@@ -194,3 +194,7 @@ class RadarChart(Graph):
 
     def draw_all(self, param_map):
         return self.draw(param_map)
+
+    @property
+    def position(self):
+        return self.__position

@@ -76,7 +76,8 @@ class RandomGraphService(Service):
         """
         Function that takes the parameter map as extracted from the API request parameters, sends it to connectors that
         send the parameters to the right modules, and gets output back from those modules.
-        This class retrieves a generated graph, and returns it in a Flask response.
+        This class retrieves a generated graph, and returns it in a Flask response, including the names of graphed
+        players.
 
         :param param_map: Map containing parameters extracted from the API request.
         :return: A response either containing the generated graph in byte string representation.
@@ -90,6 +91,14 @@ class RandomGraphService(Service):
         return response
 
     def create_response(self, data_map, graph):
+        """
+        Function that extracts the player and compare names from the data map, and adds them to the response to be sent
+        back from the endpoint.
+
+        :param data_map: Map containing the 'player' and, optionally, the 'compare' keys.
+        :param graph: Graph to add to the response.
+        :return: Response containing the graph, and the player and, if it was passed, the compare player as headers
+        """
         response = Response(graph, mimetype='image/png')
         player = data_map['player']
         compare = data_map.get('compare')

@@ -14,14 +14,14 @@ class LinePlot(Graph):
     """
     Class representing a line graph. It contains functionality for generating one from input data passed in a parameter
     map, with the main data coming from a dataframe. This dataframe is extracted from a player file in the 'files'
-    folder of this project. Most variables to do with layout and colors have been set as class attributes. They all have
-    setters, but may also be adjusted manually within this class. This class only contains functions directly to do with
-    drawing plots and setting layout. Data processing functions are contained in LinePlotDataHelper.
+    folder of this project. Most variables to do with layout and colors have been set as class attributes. They may all
+    be adjusted manually within this class. This class only contains functions directly to do with drawing plots and
+    setting layout. Data processing functions are contained in LinePlotDataHelper.
     """
     # Main player's position
     __position = ''
-    # Tactalyse's company color (orange)
-    __tactalyse = "#EC4A24"
+    # Tactalyse's company color (red)
+    __tactalyse = "#e51e24"
     # Black color code
     __black = "#242424"
     # Color used for the season lines in the graph
@@ -29,7 +29,7 @@ class LinePlot(Graph):
     # Color used for the main player's main stat line
     __player_color = '#f45600'
     # Color used for the main player's sub-stat line
-    __player_sub_color = '#f0a780'
+    __player_sub_color = '#dda2a4'
     # Color used for the comparison player's main stat line
     __compare_color = '#4a24ec'
     # Color used for the comparison player's sub-stat line
@@ -56,6 +56,8 @@ class LinePlot(Graph):
     __logo_y_offset = 1.15
     # Zoom of the logo, 1 = original image size
     __logo_size = 0.5
+    # Amount of original data points to average for each plotted point
+    __avg_window = 4
 
     def __init__(self, param_map):
         """
@@ -96,11 +98,11 @@ class LinePlot(Graph):
         :param sub_stat: Name of the sub-stat to plot.
         :param sub_color: Color to use for the sub-stat line.
         """
-        x_vals, y_vals = self.__helper.average_entries(player_x_values, player_stat_data)
+        x_vals, y_vals = self.__helper.average_entries(player_x_values, player_stat_data, self.__avg_window)
         label = stat + " for " + player
         self.create_plot(ax, x_vals, y_vals, color, label, order=1)
         if player_sub_data is not None:
-            x_vals, y_vals = self.__helper.average_entries(player_x_values, player_sub_data)
+            x_vals, y_vals = self.__helper.average_entries(player_x_values, player_sub_data, self.__avg_window)
             label = sub_stat.capitalize() + " for " + player
             self.create_plot(ax, x_vals, y_vals, sub_color, label, order=1)
 
@@ -113,14 +115,16 @@ class LinePlot(Graph):
         :param seasons: List containing string labels for each season to plot.
         :return: Ax object with the season lines drawn.
         """
-        plt.xlabel("Year")
-        ax.set(xticks=season_x_values, xticklabels=seasons)
+        plt.xlabel("Season")
+        ax.set(xticks=self.helper.set_season_tick_values(season_x_values), xticklabels=seasons)
         no_label = False
-        for season in season_x_values:
+        for i, season in enumerate(season_x_values):
+            if i == len(season_x_values) - 1:
+                break
             if no_label:
-                ax.axvline(x=season, linestyle="dashed", color=self.__season_color)
+                ax.axvline(x=season, linestyle="dashed", color=self.__black)
             else:
-                ax.axvline(x=season, linestyle="dashed", color=self.__season_color, label="Season")
+                ax.axvline(x=season, linestyle="dashed", color=self.__black, label="Season")
                 no_label = True
         return ax
 
@@ -172,7 +176,7 @@ class LinePlot(Graph):
             subtitle += "Compared with " + p2 + "\n"
         subtitle += "Stat: " + stat
         plt.suptitle(subtitle, fontsize=12, y=self.__subtitle_offset, color=self.__subtitle)
-        ax.set_title(title, fontsize=15, fontweight=0, color=self.__title, weight="bold", y=self.__title_offset)
+        ax.set_title(title, fontsize=15, fontweight=0, color=self.__tactalyse, weight="bold", y=self.__title_offset)
 
         path = "graph_app/files/images/Logo_Tactalyse_Triangle.png"
         arr_img = plt.imread(path)
@@ -231,7 +235,7 @@ class LinePlot(Graph):
 
         # Plot main player
         self.plot_player(ax, player_x_values, player_stat_data, player, subcolumns[0],
-                         self.__player_color, player_sub_data, second_column, self.__player_sub_color)
+                         self.__tactalyse, player_sub_data, second_column, self.__player_sub_color)
 
         # Repeat for compare player if they exist
         if compare and isinstance(compare_data, pd.DataFrame):
@@ -282,3 +286,11 @@ class LinePlot(Graph):
         if len(plots) == 1:
             return plots[0]
         return plots
+
+    @property
+    def helper(self):
+        return self.__helper
+
+    @property
+    def position(self):
+        return self.__position

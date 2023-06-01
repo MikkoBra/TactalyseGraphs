@@ -40,12 +40,22 @@ class TestRandomGraphService(unittest.TestCase):
         with patch.object(self.service.data_connector, 'get_data', new=self.mock_return_value) as mock_data_get_data:
             with patch.object(self.service.graph_connector, 'get_data', new=self.mock_return_value_2) \
                     as mock_graph_get_data:
-                response = self.service.pass_data(self.data_map)
-                mock_data_get_data.assert_called_once_with(self.data_map)
-                mock_graph_get_data.assert_called_once_with("mock data 1")
-                self.assertIsInstance(response, Response)
-                self.assertEqual('image/png', response.mimetype)
-                self.assertEqual("mock data 2", response.data.decode('utf-8'))
+                with patch.object(self.service, 'create_response', return_value='mock response') as mock_make_response:
+                    response = self.service.pass_data(self.data_map)
+                    mock_data_get_data.assert_called_once_with(self.data_map)
+                    mock_graph_get_data.assert_called_once_with("mock data 1")
+                    mock_make_response.assert_called_once_with('mock data 1', 'mock data 2')
+                    expected = 'mock response'
+                    self.assertEqual(expected, response)
+
+    def test_create_response(self):
+        mock_graph = MagicMock()
+        params = {'player': 'pname', 'compare': 'cname'}
+        response = self.service.create_response(params, mock_graph)
+        self.assertIsInstance(response, Response)
+        self.assertEqual('image/png', response.mimetype)
+        self.assertEqual('pname', response.headers['player'])
+        self.assertEqual('cname', response.headers['compare'])
 
 
 if __name__ == "__main__":

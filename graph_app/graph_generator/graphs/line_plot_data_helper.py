@@ -8,16 +8,6 @@ class LinePlotDataHelper:
     Seaborn and matplotlib functions.
     """
 
-    def dates_to_int(self, dates):
-        """
-        Converts a Series containing dates into integer representations of the dates, with the integer representing
-        the distance in days from the previous date.
-
-        :param dates: Pandas Series containing each date for which there is a data point in the player file.
-        :return: The Series converted to integers, each entry representing distance from the previous date.
-        """
-        return (dates - dates.min()).dt.days
-
     def scaled_date_values(self, dates):
         """
         Converts a Series containing dates into integer representations of the dates, with the integer representing
@@ -54,6 +44,8 @@ class LinePlotDataHelper:
         """
         Function that retrieves the line plot x-values from a data series corresponding with passed indices. The
         indices should represent the first data point after the start of a football season for each year in the series.
+        The last x-value represented is also added so that the tick for the last season can be put between that and the
+        last season value.
 
         :param season_indices: List containing indices of the data Series where the date is the first after the start of
         the football season for each year.
@@ -63,6 +55,7 @@ class LinePlotDataHelper:
         season_x_values = []
         for i in season_indices:
             season_x_values.append(scaled_x_values[i])
+        season_x_values.append(scaled_x_values.iloc[-1])
         return season_x_values
 
     def season_tick_labels(self, dates, year_indices):
@@ -99,7 +92,7 @@ class LinePlotDataHelper:
 
         return scaled_x_values, season_x_values, seasons
 
-    def average_entries(self, x_vals, y_vals, window=5):
+    def average_entries(self, x_vals, y_vals, window):
         """
         Function that averages every X data points in two passed Series, with X being defined by the 'window' parameter.
 
@@ -110,7 +103,9 @@ class LinePlotDataHelper:
         :return: The input Series (x_vals, y_vals) with the data averaged over each 'window' data points.
         """
         avg_x = x_vals.rolling(window=window).mean()
+        avg_x = avg_x[window-1::window]
         avg_y = y_vals.rolling(window=window).mean()
+        avg_y = avg_y[window-1::window]
         return avg_x, avg_y
 
     def create_sub_plot_data(self, subcolumns, player_data, column_index):
@@ -146,3 +141,10 @@ class LinePlotDataHelper:
         compare = param_map.get('compare')
         compare_data = param_map.get('compare_data')
         return player_data, column_name, start_date, end_date, player, compare, compare_data
+
+    def set_season_tick_values(self, season_x_vals):
+        tick_vals = []
+        for i, season in enumerate(season_x_vals):
+            if i == len(season_x_vals) - 1:
+                return tick_vals
+            tick_vals.append((season_x_vals[i] + season_x_vals[i+1])/2)
