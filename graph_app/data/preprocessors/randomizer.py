@@ -42,19 +42,6 @@ class Randomizer(Preprocessor):
 
         return param_map
 
-    def random_league(self):
-        """
-        Function that chooses a random league name from the names of the local league files.
-
-        :return: The name of a random football league, extracted from one of the filenames in graph_app/files/leagues.
-        """
-        files_folder = "graph_app/files/leagues"
-        league_files = os.listdir(files_folder)
-        random_league_file = random.choice(league_files)
-
-        file_name = os.path.splitext(random_league_file)[0]
-        return file_name
-
 
     def random_player(self, param_map):
         """

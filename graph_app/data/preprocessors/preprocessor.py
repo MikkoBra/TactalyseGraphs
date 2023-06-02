@@ -1,3 +1,6 @@
+import os
+import random
+
 from collections import Counter
 
 from graph_app.data.excel_reader import ExcelReader
@@ -96,6 +99,19 @@ class Preprocessor:
         first_position = player_positions.split(', ')[0]
         return first_position
 
+    def random_league(self):
+        """
+        Function that chooses a random league name from the names of the local league files.
+
+        :return: The name of a random football league, extracted from one of the filenames in graph_app/files/leagues.
+        """
+        files_folder = "graph_app/files/leagues"
+        league_files = os.listdir(files_folder)
+        random_league_file = random.choice(league_files)
+
+        file_name = os.path.splitext(random_league_file)[0]
+        return file_name
+
     def extract_league_data(self, param_map):
         """
         Function that extracts all league data into a DataFrame, and puts it in the passed parameter map for further
@@ -104,6 +120,9 @@ class Preprocessor:
         :param param_map: Parameter map containing data passed to the API endpoint.
         :return: Parameter map updated with a DataFrame containing all data in the league file (league_df).
         """
+        league = param_map.get('league')
+        if league is None:
+            param_map['league'] = self.random_league()
         league_df = self._reader.all_league_data(param_map['league'])
         league_df = league_df.fillna(0.0)
         param_map['league_df'] = league_df
