@@ -104,7 +104,7 @@ class Preprocessor:
         :param param_map: Parameter map containing data passed to the API endpoint.
         :return: Parameter map updated with a DataFrame containing all data in the league file (league_df).
         """
-        league_df = self._reader.all_league_data()
+        league_df = self._reader.all_league_data(param_map['league'])
         league_df = league_df.fillna(0.0)
         param_map['league_df'] = league_df
         print("Extracted data into dataframe")

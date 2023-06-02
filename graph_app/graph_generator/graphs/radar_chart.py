@@ -9,7 +9,7 @@ from .abstract_models import Graph
 
 class RadarChart(Graph):
     """ Class representing a default Graph """
-    __tactalyse = "#EC4A24"
+    __tactalyse = "#e51e24"
     __player_fill = "#F7B6A7"
     __compare = "#4A24EC"
     __compare_fill = "#B6A7F7"
@@ -135,6 +135,12 @@ class RadarChart(Graph):
         return ax
 
     def set_layout(self, ax, p1, p2, team, matches, country):
+        path = "graph_app/files/images/Logo_Tactalyse_Triangle.png"
+        arr_img = plt.imread(path)
+        im = OffsetImage(arr_img, zoom=0.4)
+        ab = AnnotationBbox(im, (1.3, 1.35), xycoords='axes fraction', frameon=False)
+        ax.add_artist(ab)
+
         determinant = ', a '
         if self.__position[0].lower() in ['a', 'e', 'i', 'o', 'u']:
             determinant = ', an '
@@ -147,12 +153,6 @@ class RadarChart(Graph):
             subtitle += "Compared with " + p2 + "\n"
         plt.suptitle(subtitle, fontsize=12, y=self.__subtitle_offset, color=self.__subtitle)
         ax.set_title(title, fontsize=15, fontweight=0, color=self.__tactalyse, weight="bold", y=self.__title_offset)
-
-        path = "graph_app/files/images/Logo_Tactalyse_Triangle.png"
-        arr_img = plt.imread(path)
-        im = OffsetImage(arr_img, zoom=0.5)
-        ab = AnnotationBbox(im, (1.23, 1.3), xycoords='axes fraction', frameon=False)
-        ax.add_artist(ab)
 
         return ax
 

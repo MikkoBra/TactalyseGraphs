@@ -51,13 +51,15 @@ class LinePlot(Graph):
     # Distance of the title from the graph itself
     __title_offset = 1.15
     # Distance of tactalyse's logo from the left of the graph
-    __logo_x_offset = 0.95
+    __logo_x_offset = 0.98
     # Distance of tactalyse's logo from the bottom of the graph
-    __logo_y_offset = 1.15
+    __logo_y_offset = 1.17
     # Zoom of the logo, 1 = original image size
-    __logo_size = 0.5
+    __logo_size = 0.4
     # Amount of original data points to average for each plotted point
     __avg_window = 4
+    __fig_w = 8
+    __fig_h = 7.75
 
     def __init__(self, param_map):
         """
@@ -124,7 +126,7 @@ class LinePlot(Graph):
             if no_label:
                 ax.axvline(x=season, linestyle="dashed", color=self.__black)
             else:
-                ax.axvline(x=season, linestyle="dashed", color=self.__black, label="Season")
+                ax.axvline(x=season, linestyle="dashed", color=self.__black)
                 no_label = True
         return ax
 
@@ -151,9 +153,9 @@ class LinePlot(Graph):
         end_x = scaled_x_values[end_idx]
 
         if 0 <= start_idx <= len(dates):
-            ax.axvline(x=start_x, linestyle="-", label="Tactalyse contract", color=self.__black)
+            ax.axvline(x=start_x, linestyle="-", label="Tactalyse contract", color=self.__tactalyse)
             if start_idx < end_idx <= len(dates):
-                ax.axvline(x=end_x, linestyle="-", color=self.__black)
+                ax.axvline(x=end_x, linestyle="-", color=self.__tactalyse)
         return ax
 
     def set_layout(self, ax, p1, p2, stat):
@@ -218,8 +220,10 @@ class LinePlot(Graph):
             self.__helper.extract_data_from_param_map(param_map)
 
         # Create plot
-        fig, ax = plt.subplots(figsize=(8, 6), gridspec_kw={'top': self.__top_offset, 'bottom': self.__bottom_offset,
-                                                            'left': self.__left_offset, 'right': self.__right_offset})
+        fig, ax = plt.subplots(figsize=(self.__fig_w, self.__fig_h), gridspec_kw={'top': self.__top_offset,
+                                                                                  'bottom': self.__bottom_offset,
+                                                                                  'left': self.__left_offset,
+                                                                                  'right': self.__right_offset})
         ax.clear()
 
         # Get x-axis values

@@ -55,7 +55,7 @@ class ExcelReader:
             raise KeyError("Player did not exist in the league file.")
         return player
 
-    def all_league_data(self):
+    def all_league_data(self, league):
         """
         Function for extracting all data from a league file into a dataframe.
 
@@ -64,7 +64,7 @@ class ExcelReader:
         files_folder = os.path.join(self.__source_folder, 'graph_app', 'files', 'leagues')
         for dirpath, dirnames, filenames in os.walk(files_folder):
             for filename in filenames:
-                if "league" in filename:
+                if league in filename:
                     file_path = os.path.join(dirpath, filename)
                     print("File found:", file_path)
                     return self.read_file(file_path)

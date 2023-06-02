@@ -24,6 +24,10 @@ class Randomizer(Preprocessor):
         random compare player's name (compare) if a radar graph is requested, a random stat from the player match files
         (stat) if a line graph is requested, and the player's league (league) set to a default value if not included.
         """
+
+        if param_map.get('league') is None:
+            param_map['league'] = self.random_league()
+
         if param_map.get('graph_type') == "radar":
             param_map = self.extract_league_data(param_map)
 
@@ -36,10 +40,21 @@ class Randomizer(Preprocessor):
         if param_map['graph_type'] == "line" and param_map.get('stat') is None:
             param_map['stat'] = self.random_player_stat()
 
-        if param_map.get('league') is None:
-            param_map['league'] = "League"
-
         return param_map
+
+    def random_league(self):
+        """
+        Function that chooses a random league name from the names of the local league files.
+
+        :return: The name of a random football league, extracted from one of the filenames in graph_app/files/leagues.
+        """
+        files_folder = "graph_app/files/leagues"
+        league_files = os.listdir(files_folder)
+        random_league_file = random.choice(league_files)
+
+        file_name = os.path.splitext(random_league_file)[0]
+        return file_name
+
 
     def random_player(self, param_map):
         """
