@@ -124,10 +124,10 @@ class RadarChart(Graph):
         ax.spines["polar"].set_color("none")
         return ax
 
-    def print_radial_axis_lines(self, ax, player_vals, num_scales):
+    def print_radial_axis_lines(self, ax, num_scales):
         h_angles = np.linspace(0, 2 * np.pi)
         h0 = np.zeros(len(h_angles))
-        ticks = np.linspace(0, max(player_vals), num_scales)
+        ticks = np.linspace(0, 1, num_scales)
 
         rad_axis_lines = [h0]
         for i in range(1, len(ticks)):
@@ -136,17 +136,19 @@ class RadarChart(Graph):
             ax.plot(h_angles, line, c='gray', lw=0.5)
         return ax
 
-    def print_angular_axis_lines(self, ax, angles, player_vals):
-        # Print lines going from center to max radius, which is max(player_vals)
-        radius = max(player_vals)
+    def print_angular_axis_lines(self, ax, angles, scale_labels):
+        # max_scales = []
+        # for scales in scale_labels:
+        #     max_scales.append(scales[-1])
+        # # Print lines going from center to max radius, which is max(player_vals)
+        # radius = max(max_scales)
         for angle in angles[:-1]:
-            ax.plot([angle, angle], [0, radius], c='gray', lw=0.5)
+            ax.plot([angle, angle], [0, 1], c='gray', lw=0.5)
         return ax
 
-    def print_y_scale_values(self, ax, angles, scale_labels, player_vals):
+    def print_y_scale_values(self, ax, angles, scale_labels):
         for i, label in enumerate(scale_labels):
             angle = angles[i]
-            radius = max(player_vals)
 
             for j, value in enumerate(label):
                 # Don't print 0 to avoid clutter in middle
@@ -154,7 +156,7 @@ class RadarChart(Graph):
                     continue
                 # Calculate the position of the label
                 x = angle
-                y = (radius / (len(label) - 1)) * j
+                y = (1 / (len(label) - 1)) * j
 
                 # Place the label on the plot
                 ax.text(x, y, str(value), ha='center', va='center', fontsize=8, color='black')
@@ -166,8 +168,8 @@ class RadarChart(Graph):
 
         ax = self.clear_grid(ax)
         num_scales = len(scale_labels[0])
-        ax = self.print_radial_axis_lines(ax, player_vals, num_scales)
-        ax = self.print_y_scale_values(ax, angles, scale_labels, player_vals)
+        ax = self.print_radial_axis_lines(ax, num_scales)
+        ax = self.print_y_scale_values(ax, angles, scale_labels)
         ax = self.print_angular_axis_lines(ax, angles, player_vals)
 
         return ax
