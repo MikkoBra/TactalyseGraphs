@@ -136,12 +136,7 @@ class RadarChart(Graph):
             ax.plot(h_angles, line, c='gray', lw=0.5)
         return ax
 
-    def print_angular_axis_lines(self, ax, angles, scale_labels):
-        # max_scales = []
-        # for scales in scale_labels:
-        #     max_scales.append(scales[-1])
-        # # Print lines going from center to max radius, which is max(player_vals)
-        # radius = max(max_scales)
+    def print_angular_axis_lines(self, ax, angles):
         for angle in angles[:-1]:
             ax.plot([angle, angle], [0, 1], c='gray', lw=0.5)
         return ax
@@ -162,15 +157,13 @@ class RadarChart(Graph):
                 ax.text(x, y, str(value), ha='center', va='center', fontsize=8, color='black')
         return ax
 
-    def print_scales(self, ax, angles, scale_labels, player_vals, compare_vals=None):
-        if compare_vals is None or max(player_vals) < max(compare_vals):
-            return ax
+    def print_scales(self, ax, angles, scale_labels):
 
         ax = self.clear_grid(ax)
         num_scales = len(scale_labels[0])
         ax = self.print_radial_axis_lines(ax, num_scales)
         ax = self.print_y_scale_values(ax, angles, scale_labels)
-        ax = self.print_angular_axis_lines(ax, angles, player_vals)
+        ax = self.print_angular_axis_lines(ax, angles)
 
         return ax
 
@@ -211,13 +204,12 @@ class RadarChart(Graph):
         ax = self.plot_player(ax, p1, p1_values, angles, self.__tactalyse)
 
         scale_labels = self.get_scale_labels(scales, self.__num_labels)
-        ax = self.print_scales(ax, angles, scale_labels, p1_values)
+        ax = self.print_scales(ax, angles, scale_labels)
 
         if p2_values is not None:
             if self.check_zeroes(p2_values):
                 raise ValueError("Player " + p2 + " had only NA entries.")
             ax = self.plot_player(ax, p2, p2_values, angles, self.__compare)
-            ax = self.print_scales(ax, angles, scale_labels, p2_values, p1_values)
 
         ax = self.print_stat_labels(ax, angles, column_names)
 
