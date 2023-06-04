@@ -61,6 +61,6 @@ def test_random():
 
 
 if __name__ == "__main__":
-    test_line()
-    # test_radar()
-    test_random()
+    # test_line()
+    test_radar()
+    # test_random()

@@ -94,10 +94,8 @@ class RadarChart(Graph):
     def print_stat_labels(self, ax, angles, column_names):
         ax.set_theta_offset(np.pi / 2)
         ax.set_theta_direction(-1)
-        ax.spines['polar'].set_visible(False)
         ax.set_xticks(angles[:-1])
         ax.set_xticklabels([])
-        ax.yaxis.grid(True)
 
         for label, angle, column_name in zip(ax.get_xticklabels(), angles, column_names):
             x, y = label.get_position()
@@ -107,19 +105,48 @@ class RadarChart(Graph):
                 vertical = 0.0
             elif abs(2 * np.pi - angle) < abs(angle - np.pi):
                 vertical = 2 * np.pi
-            offset = 0.2 * (0 + (abs(angle - vertical) / (np.pi / 2))) + 0.03
+            # length of column (label) name increases distance from plot for readability
+            offset = (0.1 + 0.01 * len(column_name)) * abs(angle - vertical) / (np.pi / 2)
             lab = ax.text(x, y - offset, column_name, transform=label.get_transform(),
                           ha=label.get_ha(), va=label.get_va())
         return ax
 
-    def print_scales(self, ax, angles, scale_labels, player_vals):
-        # Clear the auto-generated y-ticks
+    def clear_grid(self, ax):
         ax.set_yticklabels([])
+        ax.grid(False)
 
-        # Code for showing scales
+        ax.set_yticks([])
+        ax.yaxis.grid(False)
+        ax.xaxis.grid(False)
+
+        # Remove spines
+        ax.spines["start"].set_color("none")
+        ax.spines["polar"].set_color("none")
+        return ax
+
+    def print_radial_axis_lines(self, ax, player_vals, num_scales):
+        h_angles = np.linspace(0, 2 * np.pi)
+        h0 = np.zeros(len(h_angles))
+        ticks = np.linspace(0, max(player_vals), num_scales)
+
+        rad_axis_lines = [h0]
+        for i in range(1, len(ticks)):
+            rad_axis_lines.append(np.ones(len(h_angles)) * ticks[i])
+        for line in rad_axis_lines:
+            ax.plot(h_angles, line, c='gray', lw=0.5)
+        return ax
+
+    def print_angular_axis_lines(self, ax, angles, player_vals):
+        # Print lines going from center to max radius, which is max(player_vals)
+        radius = max(player_vals)
+        for angle in angles[:-1]:
+            ax.plot([angle, angle], [0, radius], c='gray', lw=0.5)
+        return ax
+
+    def print_y_scale_values(self, ax, angles, scale_labels, player_vals):
         for i, label in enumerate(scale_labels):
             angle = angles[i]
-            radius = max(player_vals) * 1.1  # Adjust the radius for placing the labels
+            radius = max(player_vals)
 
             for j, value in enumerate(label):
                 # Don't print 0 to avoid clutter in middle
@@ -127,10 +154,21 @@ class RadarChart(Graph):
                     continue
                 # Calculate the position of the label
                 x = angle
-                y = (radius / len(label)) * (j + 0.5)
+                y = (radius / (len(label) - 1)) * j
 
                 # Place the label on the plot
                 ax.text(x, y, str(value), ha='center', va='center', fontsize=8, color='black')
+        return ax
+
+    def print_scales(self, ax, angles, scale_labels, player_vals, compare_vals=None):
+        if compare_vals is None or max(player_vals) < max(compare_vals):
+            return ax
+
+        ax = self.clear_grid(ax)
+        num_scales = len(scale_labels[0])
+        ax = self.print_radial_axis_lines(ax, player_vals, num_scales)
+        ax = self.print_y_scale_values(ax, angles, scale_labels, player_vals)
+        ax = self.print_angular_axis_lines(ax, angles, player_vals)
 
         return ax
 
@@ -169,15 +207,17 @@ class RadarChart(Graph):
         if self.check_zeroes(p1_values):
             raise ValueError("Player " + p1 + " had only NA entries.")
         ax = self.plot_player(ax, p1, p1_values, angles, self.__tactalyse)
+
+        scale_labels = self.get_scale_labels(scales, self.__num_labels)
+        ax = self.print_scales(ax, angles, scale_labels, p1_values)
+
         if p2_values is not None:
             if self.check_zeroes(p2_values):
                 raise ValueError("Player " + p2 + " had only NA entries.")
             ax = self.plot_player(ax, p2, p2_values, angles, self.__compare)
+            ax = self.print_scales(ax, angles, scale_labels, p2_values, p1_values)
 
         ax = self.print_stat_labels(ax, angles, column_names)
-
-        scale_labels = self.get_scale_labels(scales, self.__num_labels)
-        ax = self.print_scales(ax, angles, scale_labels, p1_values)
 
         team = param_map.get('player_row')['Team'].iloc[0]
         matches = param_map.get('player_row')['Matches played'].iloc[0]
