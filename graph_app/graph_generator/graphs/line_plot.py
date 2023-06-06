@@ -53,7 +53,7 @@ class LinePlot(Graph):
     # Distance of tactalyse's logo from the left of the graph
     __logo_x_offset = 0.98
     # Distance of tactalyse's logo from the bottom of the graph
-    __logo_y_offset = 1.17
+    __logo_y_offset = 1.20
     # Zoom of the logo, 1 = original image size
     __logo_size = 0.4
     # Amount of original data points to average for each plotted point
@@ -239,7 +239,7 @@ class LinePlot(Graph):
 
         # Plot main player
         self.plot_player(ax, player_x_values, player_stat_data, player, subcolumns[0],
-                         self.__tactalyse, player_sub_data, second_column, self.__player_sub_color)
+                         self.__player_color, player_sub_data, second_column, self.__player_sub_color)
 
         # Repeat for compare player if they exist
         if compare and isinstance(compare_data, pd.DataFrame):
