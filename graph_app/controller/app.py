@@ -1,14 +1,10 @@
 from flask import Flask, request
-from flask_wtf.csrf import CSRFProtect
-
 from .services.file_update_service import FileUpdateService
 from .services.line_graph_service import LineGraphService
 from .services.radar_graph_service import RadarGraphService
 from .services.random_graph_service import RandomGraphService
 
-csrf = CSRFProtect()
 app = Flask(__name__)
-csrf.init_app(app)
 
 @app.route('/graph', methods=["PUT"])
 def update_files():
