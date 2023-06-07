@@ -3,5 +3,6 @@ numpy
 fpdf2
 matplotlib
 flask
+flask-wtf
 seaborn
 openpyxl
