@@ -42,7 +42,6 @@ class Randomizer(Preprocessor):
 
         return param_map
 
-
     def random_player(self, param_map):
         """
         Function that chooses a random name from the local player files for line graphs, or a random name from the

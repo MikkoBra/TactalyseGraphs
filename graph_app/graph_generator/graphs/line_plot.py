@@ -58,7 +58,9 @@ class LinePlot(Graph):
     __logo_size = 0.4
     # Amount of original data points to average for each plotted point
     __avg_window = 4
+    # Width of the output image
     __fig_w = 8
+    # Height of the output image
     __fig_h = 7.75
 
     def __init__(self, param_map):
@@ -216,7 +218,7 @@ class LinePlot(Graph):
         :return: The generated line plot in byte string form.
         """
         # Extract from parameter map
-        player_data, column_name, start_date, end_date, player, compare, compare_data =\
+        player_data, column_name, start_date, end_date, player, compare, compare_data = \
             self.__helper.extract_data_from_param_map(param_map)
 
         # Create plot

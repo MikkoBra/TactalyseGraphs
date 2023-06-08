@@ -12,4 +12,4 @@ class LinePlotFactory(AbstractGraphFactory):
             print("To be implemented.")
             return LinePlot(params)
         else:
-            return LinePlot()
+            return LinePlot(params)

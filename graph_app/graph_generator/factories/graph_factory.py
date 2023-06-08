@@ -19,6 +19,12 @@ class GraphFactory(AbstractGraphFactory):
             return graph
 
     def random_graph(self, params):
+        """
+        Function for generating a random graph instance to output from the factory.
+
+        :param params:
+        :return: The randomly chosen Graph object.
+        """
         graphs = {'line': LinePlot(params),
                   'radar': RadarChart(params)}
         random_graph = random.choice(list(graphs.values()))

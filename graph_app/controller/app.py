@@ -1,10 +1,12 @@
 from flask import Flask, request
+
 from .services.file_update_service import FileUpdateService
 from .services.line_graph_service import LineGraphService
 from .services.radar_graph_service import RadarGraphService
 from .services.random_graph_service import RandomGraphService
 
 app = Flask(__name__)
+
 
 @app.route('/graph', methods=["PUT"])
 def update_files():

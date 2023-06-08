@@ -1,6 +1,5 @@
 import os
 import random
-
 from collections import Counter
 
 from graph_app.data.excel_reader import ExcelReader
