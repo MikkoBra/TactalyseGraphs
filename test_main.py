@@ -62,6 +62,12 @@ def test_random():
 
 
 if __name__ == "__main__":
+    """
+    This function tests the functionality of the graph generator without relying on endpoints. It uses the same classes
+    and functions, but can be run as a local script. It was mostly used for testing visual output without having to
+    dockerize our code every time. It is not part of the graph generator code, and its removal would not affect
+    functionality. It was left in for convenience of future developers.
+    """
     test_line()
     test_radar()
     # test_random()
